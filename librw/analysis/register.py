@@ -139,17 +139,17 @@ class RegisterAnalysis(object):
 
         reguses = self.reg_pool.intersection(
             [self.full_register_of(x) for x in current_instruction.reg_reads()]
-        )
+        )# read registers
 
         regwrites = self.compute_reg_set_closure(
             current_instruction.reg_writes()
-        ).difference(reguses)
+        ).difference(reguses)# write registers
 
         for nexti in nexts:
             reguses = reguses.union(
-                self.used_regs[nexti].difference(regwrites))
+                self.used_regs[nexti].difference(regwrites))# next instruction's regwrites
 
-        reguses = self.compute_reg_set_closure(reguses)
+        reguses = self.compute_reg_set_closure(reguses) #extend rax to al ah ax eax rax
 
         if reguses != self.used_regs[instruction_idx]:
             self.used_regs[instruction_idx] = reguses
@@ -164,4 +164,4 @@ class RegisterAnalysis(object):
 
     def finalize(self):
         for idx, ent in self.used_regs.items():
-            self.free_regs[idx] = self.reg_pool.difference(ent)
+            self.free_regs[idx] = self.reg_pool.difference(ent) #free regs

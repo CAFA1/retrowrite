@@ -148,7 +148,7 @@ class Symbolizer():
         for _, function in container.functions.items():
             addr_to_idx = dict()
             for inst_idx, instruction in enumerate(function.cache):
-                addr_to_idx[instruction.address] = inst_idx
+                addr_to_idx[instruction.address] = inst_idx #addr to index
 
             for inst_idx, instruction in enumerate(function.cache):
                 is_jmp = CS_GRP_JUMP in instruction.cs.groups
@@ -160,7 +160,7 @@ class Symbolizer():
                         function.nexts[inst_idx].append("ret")
                         instruction.cf_leaves_fn = True
                     else:
-                        function.nexts[inst_idx].append(inst_idx + 1)
+                        function.nexts[inst_idx].append(inst_idx + 1) #next instruction's index
                     continue
 
                 instruction.cf_leaves_fn = False
@@ -186,7 +186,7 @@ class Symbolizer():
                     # Check if the target is in .text section.
                     if container.is_in_section(".text", target):
                         function.bbstarts.add(target)
-                        instruction.op_str = ".L%x" % (target)
+                        instruction.op_str = ".L%x" % (target) #add tag!!!!
                     elif target in container.plt:
                         instruction.op_str = "{}@PLT".format(
                             container.plt[target])
@@ -293,7 +293,7 @@ class Symbolizer():
                     continue
 
                 # Now we have a memory access,
-                # check if it is rip relative.
+                # check if it is rip relative. #long
                 base = mem_access.base
                 if base == X86_REG_RIP:
                     value = mem_access.disp
@@ -312,7 +312,7 @@ class Symbolizer():
                             sfx = "@PLT"
                             break
                         elif relocation['offset'] == target:
-                            is_an_import = relocation['name']
+                            is_an_import = relocation['name'] #get the relocation name
                             sfx = "@GOTPCREL"
                             break
 
@@ -325,7 +325,7 @@ class Symbolizer():
                             container, target)
                         if in_region:
                             inst.op_str = inst.op_str.replace(
-                                hex(value), ".LC%x" % (target))
+                                hex(value), ".LC%x" % (target)) #replace the 0x1e1 to .LCa75
                         else:
                             target, adjust = self._adjust_target(
                                 container, target)
@@ -335,7 +335,7 @@ class Symbolizer():
                                   (inst.address, adjust, target))
 
                     if container.is_in_section(".rodata", target):
-                        self.pot_sw_bases[function.start].add(target)
+                        self.pot_sw_bases[function.start].add(target) #This function has the LC tag
 
     def _handle_relocation(self, container, section, rel):
         reloc_type = rel['type']

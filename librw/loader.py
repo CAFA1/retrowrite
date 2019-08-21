@@ -20,10 +20,10 @@ class Loader():
     def load_functions(self, fnlist):
         section = self.elffile.get_section_by_name(".text")
         data = section.data()
-        base = section['sh_addr']
-        for faddr, fvalue in fnlist.items():
+        base = section['sh_addr'] #the base addrs of .text section
+        for faddr, fvalue in fnlist.items(): #the symbol addrs and value
             section_offset = faddr - base
-            bytes = data[section_offset:section_offset + fvalue["sz"]]
+            bytes = data[section_offset:section_offset + fvalue["sz"]] #get the function's machine bytes
 
             function = Function(fvalue["name"], faddr, fvalue["sz"], bytes,
                                 fvalue["bind"])
@@ -49,7 +49,7 @@ class Loader():
 
             bytes = more
             ds = DataSection(sec, sval["base"], sval["sz"], bytes,
-                             sval['align'])
+                             sval['align'])#data section
 
             self.container.add_section(ds)
 
@@ -61,7 +61,7 @@ class Loader():
                 section = self.elffile.get_section_by_name(sec)
                 data = section.data()
                 entries = list(
-                    disasm_bytes(section.data(), seclist[sec]['base']))
+                    disasm_bytes(section.data(), seclist[sec]['base'])) #disasm based on capstone
                 self.container.gotplt_base = seclist[sec]['base']
                 self.container.gotplt_sz = seclist[sec]['sz']
                 self.container.gotplt_entries = entries
@@ -78,7 +78,7 @@ class Loader():
             else:
                 print("[*] Relocations for a section that's not loaded:",
                       reloc_section)
-                self.container.add_relocations(section, relocations)
+                self.container.add_relocations(section, relocations) # add the .dyn section
 
     def reloc_list_from_symtab(self):
         relocs = defaultdict(list)
@@ -87,12 +87,12 @@ class Loader():
             if not isinstance(section, RelocationSection):
                 continue
 
-            symtable = self.elffile.get_section(section['sh_link'])
+            symtable = self.elffile.get_section(section['sh_link']) #symtable
 
             for rel in section.iter_relocations():
                 symbol = None
                 if rel['r_info_sym'] != 0:
-                    symbol = symtable.get_symbol(rel['r_info_sym'])
+                    symbol = symtable.get_symbol(rel['r_info_sym']) # get the symbol based on the rel index
 
                 if symbol:
                     if symbol['st_name'] == 0:
@@ -123,7 +123,8 @@ class Loader():
         ]
 
         function_list = dict()
-
+        #long
+        #f1=open('/tmp/funcs.txt','w')
         for section in symbol_tables:
             if not isinstance(section, SymbolTableSection):
                 continue
@@ -136,7 +137,7 @@ class Loader():
                     continue
 
                 if (symbol['st_info']['type'] == 'STT_FUNC'
-                        and symbol['st_shndx'] != 'SHN_UNDEF'):
+                        and symbol['st_shndx'] != 'SHN_UNDEF'): #get function sysmbol
                     function_list[symbol['st_value']] = {
                         'name': symbol.name,
                         'sz': symbol['st_size'],
@@ -165,7 +166,7 @@ class Loader():
         symbol_tables = [
             sec for sec in self.elffile.iter_sections()
             if isinstance(sec, SymbolTableSection)
-        ]
+        ]  # two symbol_table .dynsym and .symtab
 
         global_list = defaultdict(list)
 

@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.append(os.getcwd())
+
 import argparse
 import json
 
@@ -6,7 +10,9 @@ from librw.rw import Rewriter
 from librw.analysis.register import RegisterAnalysis
 from librw.analysis.stackframe import StackFrameAnalysis
 
-from .instrument import Instrument
+#from .instrument import Instrument
+from rwtools.asan.instrument import Instrument
+
 
 
 def do_symbolization(input, outfile):
@@ -55,7 +61,7 @@ def do_symbolization(input, outfile):
             analysis[addr] = dict()
             analysis[addr]["free_registers"] = dict()
             for k, info in func.analysis["free_registers"].items():
-                analysis[addr]["free_registers"][k] = list(info)
+                analysis[addr]["free_registers"][k] = list(info) #free registers
 
         with open(outfile + ".analysis_cache", "w") as fd:
             json.dump(analysis, fd)

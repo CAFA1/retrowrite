@@ -4,7 +4,7 @@ import struct
 from capstone import CS_OP_IMM, CS_OP_MEM, CS_GRP_JUMP, CS_OP_REG
 
 from . import disasm
-
+import IPython
 
 class SzPfx():
     PREFIXES = {
@@ -187,17 +187,17 @@ class Function():
                 results.append("%s" % (instruction))
                 continue
 
-            if instruction.address in self.bbstarts:
+            if instruction.address in self.bbstarts: #bbl start
                 results.append(".L%x:" % (instruction.address))
                 results.append(".LC%x:" % (instruction.address))
             else:
-                results.append(".LC%x:" % (instruction.address))
+                results.append(".LC%x:" % (instruction.address)) #every instruction's tag
 
             for iinstr in instruction.before:
                 results.append("{}".format(iinstr))
 
             results.append(
-                "\t%s %s" % (instruction.mnemonic, instruction.op_str))
+                "\t%s %s" % (instruction.mnemonic, instruction.op_str)) #print this instruction
 
             for iinstr in instruction.after:
                 results.append("{}".format(iinstr))
@@ -294,7 +294,7 @@ class DataSection():
     def load(self):
         assert not self.cache
         for byte in self.bytes:
-            self.cache.append(DataCell(byte, 1))
+            self.cache.append(DataCell(byte, 1)) #load in cache
 
     def add_relocations(self, relocations):
         self.relocations.extend(relocations)
@@ -312,10 +312,13 @@ class DataSection():
                 for x in self.cache[cacheoff:cacheoff + sz]
         ]):
             return None
-
-        value = struct.unpack(
+        #IPython.embed()
+        try:
+            value = struct.unpack(
             "<I",
             bytes([x.value for x in self.cache[cacheoff:cacheoff + sz]]))[0]
+        except:
+            value=0
 
         return value
 

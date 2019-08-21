@@ -419,7 +419,7 @@ class Instrument():
         # Add instrumentation to poison
         instrumentation.extend(copy.copy(sp.STACK_POISON_BASE))
 
-        args["off"] = ASAN_SHADOW_OFF
+        args["off"] = ASAN_SHADOW_OFF#0x7fff8000
         instrumentation.append(
             copy.copy(sp.STACK_POISON_SLOT))
 
@@ -494,9 +494,9 @@ class Instrument():
         need_red = list()
         for addr, fn in self.rewriter.container.functions.items():
             # Heuristic:
-            # Check if there is a set to canary in the first 20 instructions.
+            # Check if there is a set to canary in the first 20 instructions. #long
             for idx, instruction in enumerate(fn.cache[:20]):
-                if instruction.op_str.startswith(sp.CANARY_CHECK):
+                if instruction.op_str.startswith(sp.CANARY_CHECK): #%fs:0x28
                     need_red.append((addr, idx))
                     break
 
@@ -524,7 +524,7 @@ class Instrument():
                     if nexti.mnemonic != "movq":
                         continue
 
-                    store_exp = nexti.op_str.split(",", 1)[1].strip()
+                    store_exp = nexti.op_str.split(",", 1)[1].strip() #-8(%rbp)
                     fn.analysis[Instrument.CANARY_ANALYSIS_KEY] = store_exp
                     # Do not instrument this instruction as it will cause a
                     # violation.
@@ -583,7 +583,7 @@ class Instrument():
                     unpoisoni = self.unpoison_stack(args, need_save)
                     instruction.instrument_before(unpoisoni)
 
-            for idx, code in enumerate(inserts):
+            for idx, code in enumerate(inserts):  #???
                 fn.cache.insert(idx + code[0], code[1])
 
     def do_instrument(self):
