@@ -124,7 +124,7 @@ class Loader():
 
         function_list = dict()
         #long
-        #f1=open('/tmp/funcs.txt','w')
+        f1=open('/tmp/funcs.txt','w')
         for section in symbol_tables:
             if not isinstance(section, SymbolTableSection):
                 continue
@@ -133,20 +133,57 @@ class Loader():
                 continue
 
             for symbol in section.iter_symbols():
+                #f1.write('longfunc:'+symbol.name+'\t'+hex(symbol['st_value'])+'\n'+'\t'+repr(symbol['st_other']['visibility'])+'\t'+repr(symbol['st_info']['type'])+'\t'+repr(symbol['st_shndx'])+'\t'+repr(symbol['st_size'])+'\n')
                 if symbol['st_other']['visibility'] == "STV_HIDDEN":
-                    continue
+                    pass
+                    #continue
 
                 if (symbol['st_info']['type'] == 'STT_FUNC'
                         and symbol['st_shndx'] != 'SHN_UNDEF'): #get function sysmbol
+                    
+                    f1.write('longfunc:'+symbol.name+'\t'+hex(symbol['st_value'])+'\n'+'\t'+repr(symbol['st_other']['visibility'])+'\t'+repr(symbol['st_info']['type'])+'\t'+repr(symbol['st_shndx'])+'\t'+repr(symbol['st_size'])+'\n')
                     function_list[symbol['st_value']] = {
                         'name': symbol.name,
                         'sz': symbol['st_size'],
                         'visibility': symbol['st_other']['visibility'],
                         'bind': symbol['st_info']['bind'],
                     }
-
+        f1.close()
         return function_list
+    def flist_from_symtab1(self):
+        symbol_tables = [
+            sec for sec in self.elffile.iter_sections()
+            if isinstance(sec, SymbolTableSection)
+        ]
 
+        function_list = dict()
+        #long
+        f1=open('/tmp/funcs.txt','w')
+        for section in symbol_tables:
+            if not isinstance(section, SymbolTableSection):
+                continue
+
+            if section['sh_entsize'] == 0:
+                continue
+
+            for symbol in section.iter_symbols():
+                f1.write('longfunc:'+symbol.name+'\t'+hex(symbol['st_value'])+'\n'+'\t'+repr(symbol['st_other']['visibility'])+'\t'+repr(symbol['st_info']['type'])+'\t'+repr(symbol['st_shndx'])+'\t'+repr(symbol['st_size'])+'\n')
+                if symbol['st_other']['visibility'] == "STV_HIDDEN":
+                    pass
+                    #continue
+
+                if (symbol['st_info']['type'] == 'STT_FUNC'
+                        and symbol['st_shndx'] != 'SHN_UNDEF'): #get function sysmbol
+                    pass
+                if (symbol['st_info']['type'] == 'STT_FUNC'):
+                    function_list[symbol['st_value']] = {
+                        'name': symbol.name,
+                        'sz': symbol['st_size'],
+                        'visibility': symbol['st_other']['visibility'],
+                        'bind': symbol['st_info']['bind'],
+                    }
+        f1.close()
+        return function_list
     def slist_from_symtab(self):
         sections = dict()
         for section in self.elffile.iter_sections():
