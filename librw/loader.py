@@ -206,7 +206,8 @@ class Loader():
         ]  # two symbol_table .dynsym and .symtab
 
         global_list = defaultdict(list)
-
+        #long
+        f1=open('/tmp/data.txt','w')
         for section in symbol_tables:
             if not isinstance(section, SymbolTableSection):
                 continue
@@ -225,13 +226,19 @@ class Loader():
 
                 if (symbol['st_info']['type'] == 'STT_OBJECT'
                         and symbol['st_shndx'] != 'SHN_UNDEF'):
+                    print(symbol)
+                    f1.write('name: '+symbol.name+"\tsize: "+repr(symbol['st_size'])+'\tvisual: '+symbol['st_other']['visibility']+'\tbind: '+symbol['st_info']['bind'] +'\n')
+                    myname="{}".format(symbol.name)
+                    if(myname=='_IO_stdin_used'):
+                        myname=myname+'_1'
                     global_list[symbol['st_value']].append({
                         'name':
-                        "{}_{:x}".format(symbol.name, symbol['st_value']),
+                        #"{}_{:x}".format(symbol.name, symbol['st_value']),
+                        myname,
                         'sz':
                         symbol['st_size'],
                     })
-
+        f1.close()
         return global_list
 
 
