@@ -22,4 +22,11 @@ testbins/tiny/stack_example.o
 testbins/tiny/stack_example.s
 testbins/tiny/tinylib.i
 testbins/tiny/tinylib.s
-mytest/
+mytest/binutils  
+mytest/file  
+mytest/libpng  
+mytest/libtiff
+**/fuzz/
+*.analysis_cache
+.gdb_history
+peda-session-file-retrowrite.txt
