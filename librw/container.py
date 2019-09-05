@@ -343,7 +343,7 @@ class DataSection():
             yield cidx, location, cell
             location = location + cell.sz
 
-    def __str__(self):
+    def __str__(self): #print section
         if not self.cache:
             return ""
 

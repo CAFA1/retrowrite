@@ -1,3 +1,8 @@
+#long
+import os
+import sys
+sys.path.append(os.getcwd())
+
 import argparse
 from collections import defaultdict
 
@@ -37,9 +42,9 @@ class Rewriter():
         "__cxa_atexit",
         "__cxa_finalize",
     ]
-
-    DATASECTIONS = [".rodata", ".data", ".bss", ".data.rel.ro", ".init_array"]
-
+    #long
+    #DATASECTIONS = [".rodata", ".data", ".bss", ".data.rel.ro", ".init_array"]
+    DATASECTIONS = [".text",".rodata", ".data", ".bss", ".data.rel.ro", ".init_array"]
     def __init__(self, container, outfile):
         self.container = container
         self.outfile = outfile
@@ -61,7 +66,9 @@ class Rewriter():
         results = list()
         for sec, section in sorted(
                 self.container.sections.items(), key=lambda x: x[1].base):
-            results.append("%s" % (section))
+            #long
+            if(section.name != '.text'):
+                results.append("%s" % (section))
 
         results.append(".section .text")
         results.append(".align 16")
@@ -381,8 +388,11 @@ class Symbolizer():
 
 
 if __name__ == "__main__":
-    from .loader import Loader
-    from .analysis import register
+    #long
+    #from .loader import Loader
+    from librw.loader import Loader
+    #from .analysis import register
+    from librw.analysis import register
 
     argp = argparse.ArgumentParser()
 
