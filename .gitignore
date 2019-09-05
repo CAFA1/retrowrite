@@ -30,3 +30,6 @@ mytest/libtiff
 *.analysis_cache
 .gdb_history
 peda-session-file-retrowrite.txt
+mytest/mylib/mylib/tinylib.o
+mytest/mylib/retrowrite/
+mytest/mylib/gcc/

@@ -4,7 +4,7 @@
 
 #include "tinylib.h"
 
-int do_heap() {
+__attribute ((visibility("default"))) int do_heap() {
     char *secret = malloc(32);
     scanf("%s", secret);
 
@@ -19,20 +19,23 @@ int do_heap() {
 
     return 1;
 }
-
-int do_stack() {
+int func1(char*a)
+{
+	printf("In func1 :%s",a);
+}
+__attribute ((visibility("default"))) int do_stack() {
     char secret[32];
     scanf("%s", secret);
     if(secret[0]!='a'){
-    	printf("a\n");
+    	func1("a\n");
     	return 1;
     }
     if(secret[1]!='b'){
-    	printf("b\n");
+    	func1("b\n");
     	return 2;
     }
     if(secret[2]!='c'){
-    	printf("c\n");
+    	func1("c\n");
     	return 3;
     }
     if(secret[3]!='d'){
@@ -51,7 +54,7 @@ int do_stack() {
     return 1;
 }
 
-int do_global() {
+__attribute ((visibility("default"))) int do_global() {
     char secret[256];
     scanf("%s", secret);
 

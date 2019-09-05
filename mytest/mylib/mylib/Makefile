@@ -2,16 +2,16 @@ CC?=gcc
 CDIR=$(shell pwd)
 BUILD=$(CDIR)/../gcc/
 
-all:  $(BUILD)overflow_stack static1 static2
+all:  so static1 static2 
 
-$(BUILD)tinylib.o: tinylib.c
-	$(CC) -c $< -o $@ -fpic
 
-$(BUILD)libtiny.so: $(BUILD)tinylib.o
-	$(CC) -shared -o $@ $< 
 
-$(BUILD)overflow_stack: $(BUILD)libtiny.so
-	$(CC) -fPIE -pie -L$(BUILD) -Wall -o $@ tiny.c -DSTACK_OVERFLOW=1 -ltiny 
+so:
+	gcc -shared -fpic -fvisibility=hidden -o ../gcc/libtiny.so tinylib.c 
+	strip ../gcc/libtiny.so
+
+
+	
 
 static1:
 	gcc -c tinylib.c -o tinylib.o
