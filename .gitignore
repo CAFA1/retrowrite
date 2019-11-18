@@ -33,3 +33,4 @@ peda-session-file-retrowrite.txt
 mytest/mylib/mylib/tinylib.o
 mytest/mylib/retrowrite/
 mytest/mylib/gcc/
+docker/tiff/
