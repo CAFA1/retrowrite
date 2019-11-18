@@ -15,6 +15,9 @@ docker/tcpdump-fuzz.zip
 docker/tiff-fuzz.zip
 docker/uniq-fuzz.zip
 docker/who-fuzz.zip
+docker/tests-minimized
+docker/libarchive-fuzz
+docker/contrib
 retro/
 testbins/tiny/build/
 testbins/tiny/stack_example.i
