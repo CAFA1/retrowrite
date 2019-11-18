@@ -2,14 +2,17 @@ CC?=gcc
 CDIR=$(shell pwd)
 BUILD=$(CDIR)/../gcc/
 
-all:  so static1 static2 
+all:  so static1 stripso
+#static2 
 
 
 
 so:
 	gcc -shared -fpic -fvisibility=hidden -o ../gcc/libtiny.so tinylib.c 
-	strip ../gcc/libtiny.so
-
+	#strip ../gcc/libtiny.so
+stripso:
+	gcc -shared -fpic -fvisibility=hidden -o ../gcc/libtiny_strip.so tinylib.c 
+	strip ../gcc/libtiny_strip.so
 
 	
 

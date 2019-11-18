@@ -257,7 +257,7 @@ static void add_instrumentation(void) {
 
     if (!pass_thru && !skip_intel && !skip_app && !skip_csect && instr_ok &&
         instrument_next && line[0] == '\t' && isalpha(line[1])) {
-
+      printf("line: %s\n",line);
       fprintf(outf, use_64bit ? trampoline_fmt_64 : trampoline_fmt_32,
               R(MAP_SIZE));
 
@@ -269,7 +269,7 @@ static void add_instrumentation(void) {
     /* Output the actual line, call it a day in pass-thru mode. */
 
     fputs(line, outf);
-
+    //printf("pass_thru: %d\n",pass_thru);
     if (pass_thru) continue;
 
     /* All right, this is where the actual fun begins. For one, we only want to
