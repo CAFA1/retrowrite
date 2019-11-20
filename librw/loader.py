@@ -233,8 +233,8 @@ class Loader():
                         myname=myname+'_1'
                     global_list[symbol['st_value']].append({
                         'name':
-                        #"{}_{:x}".format(symbol.name, symbol['st_value']),
-                        myname,
+                        "{}_{:x}".format(symbol.name, symbol['st_value']),
+                        #myname,
                         'sz':
                         symbol['st_size'],
                     })

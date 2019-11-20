@@ -204,7 +204,8 @@ static void edit_params(int argc, char** argv) {
 
   modified_file = alloc_printf("%s/.afl-%u-%u.s", tmp_dir, getpid(),
                                (u32)time(NULL));
-
+  //long
+  printf("long output file: %s\n",modified_file);
 wrap_things_up:
 
   as_params[as_par_cnt++] = modified_file;
@@ -257,7 +258,7 @@ static void add_instrumentation(void) {
 
     if (!pass_thru && !skip_intel && !skip_app && !skip_csect && instr_ok &&
         instrument_next && line[0] == '\t' && isalpha(line[1])) {
-      printf("line: %s\n",line);
+      //printf("line: %s\n",line);
       fprintf(outf, use_64bit ? trampoline_fmt_64 : trampoline_fmt_32,
               R(MAP_SIZE));
 
