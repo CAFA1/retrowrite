@@ -270,10 +270,157 @@ completed.7594_601054: # 601054 -- 601055
 	.byte 0x0
 .section .text
 .align 16
-	.text
-.globl func1
-.type func1, @function
-func1:
+.LC400550:
+	xorl %ebp, %ebp
+.LC400552:
+	movq %rdx, %r9
+.LC400555:
+	popq %rsi
+.LC400556:
+	movq %rsp, %rdx
+.LC400559:
+	andq $0xfffffffffffffff0, %rsp
+.LC40055d:
+	pushq %rax
+.LC40055e:
+	pushq %rsp
+.LC40055f:
+	movq $0x400850, %r8
+.LC400566:
+	movq $0x4007e0, %rcx
+.LC40056d:
+	movq $0x400687, %rdi
+.LC400574:
+	callq __libc_start_main@PLT
+.LC400579:
+	hlt 
+.LC40057a:
+	nopw 0(%rax, %rax)
+.L400580:
+.LC400580:
+	movl $0x60105f, %eax
+.LC400585:
+	pushq %rbp
+.LC400586:
+	subq $0x601058, %rax
+.LC40058c:
+	cmpq $0xe, %rax
+.LC400590:
+	movq %rsp, %rbp
+.LC400593:
+	jbe .L4005b0
+.LC400595:
+	movl $0, %eax
+.LC40059a:
+	testq %rax, %rax
+.LC40059d:
+	je .L4005b0
+.LC40059f:
+	popq %rbp
+.LC4005a0:
+	movl $0x601058, %edi
+.LC4005a5:
+	jmpq *%rax
+.LC4005a7:
+	nopw 0(%rax, %rax)
+.L4005b0:
+.LC4005b0:
+	popq %rbp
+.LC4005b1:
+	retq 
+.LC4005b2:
+	nopl 0(%rax)
+.LC4005b6:
+	nopw %cs:0(%rax, %rax)
+.L4005c0:
+.LC4005c0:
+	movl $0x601058, %esi
+.LC4005c5:
+	pushq %rbp
+.LC4005c6:
+	subq $0x601058, %rsi
+.LC4005cd:
+	sarq $3, %rsi
+.LC4005d1:
+	movq %rsp, %rbp
+.LC4005d4:
+	movq %rsi, %rax
+.LC4005d7:
+	shrq $0x3f, %rax
+.LC4005db:
+	addq %rax, %rsi
+.LC4005de:
+	sarq $1, %rsi
+.LC4005e1:
+	je .L4005f8
+.LC4005e3:
+	movl $0, %eax
+.LC4005e8:
+	testq %rax, %rax
+.LC4005eb:
+	je .L4005f8
+.LC4005ed:
+	popq %rbp
+.LC4005ee:
+	movl $0x601058, %edi
+.LC4005f3:
+	jmpq *%rax
+.LC4005f5:
+	nopl 0(%rax)
+.L4005f8:
+.LC4005f8:
+	popq %rbp
+.LC4005f9:
+	retq 
+.LC4005fa:
+	nopw 0(%rax, %rax)
+.LC400600:
+	cmpb $0, .LC601054(%rip)
+.LC400607:
+	jne .L40061a
+.LC400609:
+	pushq %rbp
+.LC40060a:
+	movq %rsp, %rbp
+.LC40060d:
+	callq .L400580
+.LC400612:
+	popq %rbp
+.LC400613:
+	movb $1, .LC601054(%rip)
+.L40061a:
+.LC40061a:
+	retq 
+.LC40061c:
+	nopl 0(%rax)
+.LC400620:
+	movl $0x600e20, %edi
+.LC400625:
+	cmpq $0, 0(%rdi)
+.LC400629:
+	jne .L400630
+.L40062b:
+.LC40062b:
+	jmp .L4005c0
+.LC40062d:
+	nopl 0(%rax)
+.L400630:
+.LC400630:
+	movl $0, %eax
+.LC400635:
+	testq %rax, %rax
+.LC400638:
+	je .L40062b
+.LC40063a:
+	pushq %rbp
+.LC40063b:
+	movq %rsp, %rbp
+.LC40063e:
+	callq *%rax
+.LC400640:
+	popq %rbp
+.LC400641:
+	jmp .L4005c0
 .L400646:
 .LC400646:
 	pushq %rbp
@@ -293,11 +440,6 @@ func1:
 	popq %rbp
 .LC40065d:
 	retq 
-.size func1,.-func1
-	.text
-.globl func2
-.type func2, @function
-func2:
 .L40065e:
 .LC40065e:
 	pushq %rbp
@@ -325,12 +467,9 @@ func2:
 	popq %rbp
 .LC400686:
 	retq 
-.size func2,.-func2
-	.text
+
 .globl main
-.type main, @function
 main:
-.L400687:
 .LC400687:
 	pushq %rbp
 .LC400688:
@@ -483,4 +622,11 @@ main:
 	leave 
 .LC4007d6:
 	retq 
-.size main,.-main
+.LC4007d7:
+	nopw 0(%rax, %rax)
+.LC4007e0:
+	nop 
+.LC4007e1:
+	nopw %cs:0(%rax, %rax)
+.LC4007eb:
+	retq 

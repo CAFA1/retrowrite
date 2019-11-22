@@ -242,6 +242,7 @@ class Symbolizer():
 
                 # We have a valid switch base now.
                 swlbl = ".LC%x-.LC%x" % (value, swbase)
+                print ('swlbl: '+swlbl+'\n')
                 rodata.replace(swbase, 4, swlbl)
 
                 # Symbolize as long as we can
@@ -258,6 +259,7 @@ class Symbolizer():
                         break
 
                     swlbl = ".LC%x-.LC%x" % (value, swbase)
+                    print ('swlbl: '+swlbl+'\n')
                     rodata.replace(slot, 4, swlbl)
 
     def _adjust_target(self, container, target):
