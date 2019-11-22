@@ -268,7 +268,7 @@ completed.7594_601054: # 601054 -- 601055
 	.byte 0x0
 .LC601057:
 	.byte 0x0
-.section .text
+	.section	.text
 .align 16
 .LC400550:
 	xorl %ebp, %ebp
@@ -467,9 +467,9 @@ completed.7594_601054: # 601054 -- 601055
 	popq %rbp
 .LC400686:
 	retq 
-
 .globl main
 main:
+
 .LC400687:
 	pushq %rbp
 .LC400688:

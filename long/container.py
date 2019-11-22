@@ -31,6 +31,8 @@ class Container():
 		self.tags_set=set()
 		#long
 		self.rodata_tags_set=set()
+		#long 
+		#self.call_start_main_addr = 0
 
 		self.function_names = set()
 		self.sections = dict()

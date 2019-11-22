@@ -37,3 +37,4 @@ mytest/mylib/mylib/tinylib.o
 mytest/mylib/retrowrite/
 mytest/mylib/gcc/
 docker/tiff/
+long/fuzz/

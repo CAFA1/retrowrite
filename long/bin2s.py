@@ -69,17 +69,34 @@ class Rewriter():
 			#long
 			if(section.name != '.text'):
 				results.append("%s" % (section))
-
-		results.append(".section .text")
+		#long
+		results.append("	.section\t.text")
 		results.append(".align 16")
 
+		#long
+		last_instruction = self.container.disa_list[0]
+		mov_main_instruction = last_instruction
 		for instruction in self.container.disa_list:
+			if(instruction.mnemonic.startswith('call') and instruction.op_str.startswith('__libc_start_main')):
+				mov_main_instruction=last_instruction
+			last_instruction=instruction
+
+		#movq $0x400687, %rdi
+		main_address=0
+		if(mov_main_instruction.mnemonic.startswith('mov')):
+			main_address=int(mov_main_instruction.op_str.split(',')[0][1:],16)
+		assert main_address!=0
+		for instruction in self.container.disa_list:
+			
+			if(instruction.address==main_address):
+				results.append('.globl main\nmain:\n')
 			if(instruction.address in self.container.tags_set):
 				results.append(".L%x:" % (instruction.address))
 				results.append(".LC%x:" % (instruction.address))
 			else:
 				results.append(".LC%x:" % (instruction.address))
 			results.append("\t%s %s" % (instruction.mnemonic,instruction.op_str))
+			
 
 		with open(self.outfile, 'w') as outfd:
 			outfd.write("\n".join(results + ['']))
@@ -169,6 +186,7 @@ class Symbolizer():
 				elif target in container.plt:
 					instruction.op_str = "{}@PLT".format(
 						container.plt[target])
+					
 				else:
 					gotent = container.is_target_gotplt(target)
 					if gotent:
