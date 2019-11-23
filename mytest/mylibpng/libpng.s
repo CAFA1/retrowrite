@@ -2528,9 +2528,9 @@
 	.byte 0x63
 .LC1c86f:
 	.byte 0x0
-.type	png_pass_dsp_mask,@object
-.globl png_pass_dsp_mask
-png_pass_dsp_mask: # 1c870 -- 1c88c
+.type	png_pass_dsp_mask_1c870,@object
+.globl png_pass_dsp_mask_1c870
+png_pass_dsp_mask_1c870: # 1c870 -- 1c88c
 .LC1c870:
 	.byte 0xff
 .LC1c871:
@@ -2595,9 +2595,9 @@ png_pass_dsp_mask: # 1c870 -- 1c88c
 	.byte 0x0
 .LC1c88f:
 	.byte 0x0
-.type	png_pass_mask,@object
-.globl png_pass_mask
-png_pass_mask: # 1c890 -- 1c8ac
+.type	png_pass_mask_1c890,@object
+.globl png_pass_mask_1c890
+png_pass_mask_1c890: # 1c890 -- 1c8ac
 .LC1c890:
 	.byte 0x80
 .LC1c891:
@@ -2662,9 +2662,9 @@ png_pass_mask: # 1c890 -- 1c8ac
 	.byte 0x0
 .LC1c8af:
 	.byte 0x0
-.type	png_pass_yinc,@object
-.globl png_pass_yinc
-png_pass_yinc: # 1c8b0 -- 1c8cc
+.type	png_pass_yinc_1c8b0,@object
+.globl png_pass_yinc_1c8b0
+png_pass_yinc_1c8b0: # 1c8b0 -- 1c8cc
 .LC1c8b0:
 	.byte 0x8
 .LC1c8b1:
@@ -2729,9 +2729,9 @@ png_pass_yinc: # 1c8b0 -- 1c8cc
 	.byte 0x0
 .LC1c8cf:
 	.byte 0x0
-.type	png_pass_ystart,@object
-.globl png_pass_ystart
-png_pass_ystart: # 1c8d0 -- 1c8ec
+.type	png_pass_ystart_1c8d0,@object
+.globl png_pass_ystart_1c8d0
+png_pass_ystart_1c8d0: # 1c8d0 -- 1c8ec
 .LC1c8d0:
 	.byte 0x0
 .LC1c8d1:
@@ -2796,9 +2796,9 @@ png_pass_ystart: # 1c8d0 -- 1c8ec
 	.byte 0x0
 .LC1c8ef:
 	.byte 0x0
-.type	png_pass_inc,@object
-.globl png_pass_inc
-png_pass_inc: # 1c8f0 -- 1c90c
+.type	png_pass_inc_1c8f0,@object
+.globl png_pass_inc_1c8f0
+png_pass_inc_1c8f0: # 1c8f0 -- 1c90c
 .LC1c8f0:
 	.byte 0x8
 .LC1c8f1:
@@ -2863,9 +2863,9 @@ png_pass_inc: # 1c8f0 -- 1c90c
 	.byte 0x0
 .LC1c90f:
 	.byte 0x0
-.type	png_pass_start,@object
-.globl png_pass_start
-png_pass_start: # 1c910 -- 1c92c
+.type	png_pass_start_1c910,@object
+.globl png_pass_start_1c910
+png_pass_start_1c910: # 1c910 -- 1c92c
 .LC1c910:
 	.byte 0x0
 .LC1c911:
@@ -2962,9 +2962,9 @@ png_pass_start: # 1c910 -- 1c92c
 	.byte 0x0
 .LC1c93f:
 	.byte 0x0
-.type	png_libpng_ver,@object
-.globl png_libpng_ver
-png_libpng_ver: # 1c940 -- 1c952
+.type	png_libpng_ver_1c940,@object
+.globl png_libpng_ver_1c940
+png_libpng_ver_1c940: # 1c940 -- 1c952
 .LC1c940:
 	.byte 0x31
 .LC1c941:

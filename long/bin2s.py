@@ -11,6 +11,9 @@ from capstone.x86_const import X86_REG_RIP
 
 from elftools.elf.descriptions import describe_reloc_type
 from elftools.elf.enums import ENUM_RELOC_TYPE_x64
+#long
+import r2pipe 
+import json
 
 
 class Rewriter():
@@ -45,7 +48,11 @@ class Rewriter():
 	#long
 	#DATASECTIONS = [".rodata", ".data", ".bss", ".data.rel.ro", ".init_array"]
 	DATASECTIONS = [".text",".rodata", ".data", ".bss", ".data.rel.ro", ".init_array"]
-	def __init__(self, container, outfile):
+	def __init__(self, fname, container, outfile):
+		#long
+		self.r2 = r2pipe.open(fname)
+		self.r2.cmd("aaa") 
+
 		self.container = container
 		self.outfile = outfile
 
@@ -62,6 +69,11 @@ class Rewriter():
 		symb.symbolize_text_section(self.container, None)
 		symb.symbolize_data_sections(self.container, None)
 	#long
+	def is_in_list(self,addr,init_call_funcs_list):
+		for init_call in init_call_funcs_list:
+			if(addr>=init_call[0] and addr<=init_call[0]+init_call[1]):
+				return True
+		return False
 	def dump(self):
 		results = list()
 		for sec, section in sorted(
@@ -72,8 +84,15 @@ class Rewriter():
 		#long
 		results.append("	.section\t.text")
 		results.append(".align 16")
+		#long find call .init section function
+		init_call_funcs_list=list()
+		for call_site in self.container.missed_call_set:
+			func1 = self.r2.cmd('afij '+hex(call_site))
+			func1_json = json.loads(func1)
+			print(hex(func1_json[0]['offset']),hex(func1_json[0]['size']))
+			init_call_funcs_list.append((func1_json[0]['offset'],func1_json[0]['size']))
 
-		#long
+		#long find main
 		last_instruction = self.container.disa_list[0]
 		mov_main_instruction = last_instruction
 		for instruction in self.container.disa_list:
@@ -90,6 +109,10 @@ class Rewriter():
 			
 			if(instruction.address==main_address):
 				results.append('.globl main\nmain:\n')
+			#long init call
+			
+			if(self.is_in_list(instruction.address,init_call_funcs_list)):
+				continue
 			if(instruction.address in self.container.tags_set):
 				results.append(".L%x:" % (instruction.address))
 				results.append(".LC%x:" % (instruction.address))
@@ -186,8 +209,10 @@ class Symbolizer():
 				elif target in container.plt:
 					instruction.op_str = "{}@PLT".format(
 						container.plt[target])
-					
 				else:
+					#long
+					print('this instruction: '+hex(instruction.address))
+					container.missed_call_set.add(instruction.address)
 					gotent = container.is_target_gotplt(target)
 					if gotent:
 						found = False
@@ -200,6 +225,7 @@ class Symbolizer():
 						if not found:
 							print("[x] Missed GOT entry!")
 					else:
+						
 						print("[x] Missed call target: %x" % (target))
 				print("0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
 				
@@ -387,7 +413,7 @@ if __name__ == "__main__":
 	args = argp.parse_args()
 
 	loader = Loader(args.bin)
-
+	
 	#flist = loader.flist_from_symtab()
 	#loader.load_functions(flist)
 	loader.load_text()
@@ -405,6 +431,6 @@ if __name__ == "__main__":
 
 	loader.container.attach_loader(loader)
 
-	rw = Rewriter(loader.container, args.outfile)
+	rw = Rewriter(args.bin,loader.container, args.outfile)
 	rw.symbolize()
 	rw.dump()

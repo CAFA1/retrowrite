@@ -14,201 +14,209 @@ _IO_stdin_used_400860: # 400860 -- 400864
 .LC400864:
 	.byte 0x25
 .LC400865:
-	.byte 0x73
+	.byte 0x31
 .LC400866:
-	.byte 0x0
+	.byte 0x30
 .LC400867:
-	.byte 0x6f
+	.byte 0x73
 .LC400868:
-	.byte 0x6b
+	.byte 0x0
 .LC400869:
-	.byte 0x61
+	.byte 0x6f
 .LC40086a:
-	.byte 0x0
-.LC40086b:
-	.byte 0x66
-.LC40086c:
-	.byte 0x61
-.LC40086d:
-	.byte 0x69
-.LC40086e:
-	.byte 0x6c
-.LC40086f:
-	.byte 0x61
-.LC400870:
-	.byte 0x0
-.LC400871:
-	.byte 0x6f
-.LC400872:
 	.byte 0x6b
-.LC400873:
-	.byte 0x62
-.LC400874:
+.LC40086b:
+	.byte 0x61
+.LC40086c:
 	.byte 0x0
-.LC400875:
+.LC40086d:
 	.byte 0x66
-.LC400876:
+.LC40086e:
 	.byte 0x61
-.LC400877:
+.LC40086f:
 	.byte 0x69
-.LC400878:
+.LC400870:
 	.byte 0x6c
-.LC400879:
+.LC400871:
+	.byte 0x61
+.LC400872:
+	.byte 0x0
+.LC400873:
+	.byte 0x6f
+.LC400874:
+	.byte 0x6b
+.LC400875:
 	.byte 0x62
-.LC40087a:
+.LC400876:
 	.byte 0x0
-.LC40087b:
-	.byte 0x4d
-.LC40087c:
-	.byte 0x6f
-.LC40087d:
-	.byte 0x6e
-.LC40087e:
-	.byte 0x64
-.LC40087f:
+.LC400877:
+	.byte 0x66
+.LC400878:
 	.byte 0x61
-.LC400880:
-	.byte 0x79
-.LC400881:
-	.byte 0x0
-.LC400882:
-	.byte 0x54
-.LC400883:
-	.byte 0x75
-.LC400884:
-	.byte 0x65
-.LC400885:
-	.byte 0x73
-.LC400886:
-	.byte 0x64
-.LC400887:
-	.byte 0x61
-.LC400888:
-	.byte 0x79
-.LC400889:
-	.byte 0x0
-.LC40088a:
-	.byte 0x57
-.LC40088b:
-	.byte 0x65
-.LC40088c:
-	.byte 0x64
-.LC40088d:
-	.byte 0x6e
-.LC40088e:
-	.byte 0x65
-.LC40088f:
-	.byte 0x73
-.LC400890:
-	.byte 0x64
-.LC400891:
-	.byte 0x61
-.LC400892:
-	.byte 0x79
-.LC400893:
-	.byte 0x0
-.LC400894:
-	.byte 0x54
-.LC400895:
-	.byte 0x68
-.LC400896:
-	.byte 0x75
-.LC400897:
-	.byte 0x72
-.LC400898:
-	.byte 0x73
-.LC400899:
-	.byte 0x64
-.LC40089a:
-	.byte 0x61
-.LC40089b:
-	.byte 0x79
-.LC40089c:
-	.byte 0x0
-.LC40089d:
-	.byte 0x46
-.LC40089e:
-	.byte 0x72
-.LC40089f:
+.LC400879:
 	.byte 0x69
-.LC4008a0:
-	.byte 0x64
-.LC4008a1:
-	.byte 0x61
-.LC4008a2:
-	.byte 0x79
-.LC4008a3:
+.LC40087a:
+	.byte 0x6c
+.LC40087b:
+	.byte 0x62
+.LC40087c:
 	.byte 0x0
-.LC4008a4:
-	.byte 0x53
-.LC4008a5:
-	.byte 0x61
-.LC4008a6:
-	.byte 0x74
-.LC4008a7:
-	.byte 0x75
-.LC4008a8:
-	.byte 0x72
-.LC4008a9:
-	.byte 0x64
-.LC4008aa:
-	.byte 0x61
-.LC4008ab:
-	.byte 0x79
-.LC4008ac:
-	.byte 0x0
-.LC4008ad:
-	.byte 0x53
-.LC4008ae:
-	.byte 0x75
-.LC4008af:
-	.byte 0x6e
-.LC4008b0:
-	.byte 0x64
-.LC4008b1:
-	.byte 0x61
-.LC4008b2:
-	.byte 0x79
-.LC4008b3:
-	.byte 0x0
-.LC4008b4:
-	.byte 0x65
-.LC4008b5:
-	.byte 0x72
-.LC4008b6:
-	.byte 0x72
-.LC4008b7:
+.LC40087d:
+	.byte 0x4d
+.LC40087e:
 	.byte 0x6f
+.LC40087f:
+	.byte 0x6e
+.LC400880:
+	.byte 0x64
+.LC400881:
+	.byte 0x61
+.LC400882:
+	.byte 0x79
+.LC400883:
+	.byte 0x0
+.LC400884:
+	.byte 0x54
+.LC400885:
+	.byte 0x75
+.LC400886:
+	.byte 0x65
+.LC400887:
+	.byte 0x73
+.LC400888:
+	.byte 0x64
+.LC400889:
+	.byte 0x61
+.LC40088a:
+	.byte 0x79
+.LC40088b:
+	.byte 0x0
+.LC40088c:
+	.byte 0x57
+.LC40088d:
+	.byte 0x65
+.LC40088e:
+	.byte 0x64
+.LC40088f:
+	.byte 0x6e
+.LC400890:
+	.byte 0x65
+.LC400891:
+	.byte 0x73
+.LC400892:
+	.byte 0x64
+.LC400893:
+	.byte 0x61
+.LC400894:
+	.byte 0x79
+.LC400895:
+	.byte 0x0
+.LC400896:
+	.byte 0x54
+.LC400897:
+	.byte 0x68
+.LC400898:
+	.byte 0x75
+.LC400899:
+	.byte 0x72
+.LC40089a:
+	.byte 0x73
+.LC40089b:
+	.byte 0x64
+.LC40089c:
+	.byte 0x61
+.LC40089d:
+	.byte 0x79
+.LC40089e:
+	.byte 0x0
+.LC40089f:
+	.byte 0x46
+.LC4008a0:
+	.byte 0x72
+.LC4008a1:
+	.byte 0x69
+.LC4008a2:
+	.byte 0x64
+.LC4008a3:
+	.byte 0x61
+.LC4008a4:
+	.byte 0x79
+.LC4008a5:
+	.byte 0x0
+.LC4008a6:
+	.byte 0x53
+.LC4008a7:
+	.byte 0x61
+.LC4008a8:
+	.byte 0x74
+.LC4008a9:
+	.byte 0x75
+.LC4008aa:
+	.byte 0x72
+.LC4008ab:
+	.byte 0x64
+.LC4008ac:
+	.byte 0x61
+.LC4008ad:
+	.byte 0x79
+.LC4008ae:
+	.byte 0x0
+.LC4008af:
+	.byte 0x53
+.LC4008b0:
+	.byte 0x75
+.LC4008b1:
+	.byte 0x6e
+.LC4008b2:
+	.byte 0x64
+.LC4008b3:
+	.byte 0x61
+.LC4008b4:
+	.byte 0x79
+.LC4008b5:
+	.byte 0x0
+.LC4008b6:
+	.byte 0x65
+.LC4008b7:
+	.byte 0x72
 .LC4008b8:
 	.byte 0x72
 .LC4008b9:
-	.byte 0x0
+	.byte 0x6f
 .LC4008ba:
-	.byte 0x61
+	.byte 0x72
 .LC4008bb:
-	.byte 0x3d
-.LC4008bc:
-	.byte 0x25
-.LC4008bd:
-	.byte 0x64
-.LC4008be:
-	.byte 0xa
-.LC4008bf:
 	.byte 0x0
+.LC4008bc:
+	.byte 0x61
+.LC4008bd:
+	.byte 0x3d
+.LC4008be:
+	.byte 0x25
+.LC4008bf:
+	.byte 0x64
 .LC4008c0:
-	.long .LC400730-.LC4008c0
+	.byte 0xa
+.LC4008c1:
+	.byte 0x0
+.LC4008c2:
+	.byte 0x0
+.LC4008c3:
+	.byte 0x0
 .LC4008c4:
-	.long .LC400746-.LC4008c0
+	.long .LC400730-.LC4008c4
 .LC4008c8:
-	.long .LC40075c-.LC4008c0
+	.long .LC400746-.LC4008c4
 .LC4008cc:
-	.long .LC400768-.LC4008c0
+	.long .LC40075c-.LC4008c4
 .LC4008d0:
-	.long .LC400774-.LC4008c0
+	.long .LC400768-.LC4008c4
 .LC4008d4:
-	.long .LC400780-.LC4008c0
+	.long .LC400774-.LC4008c4
 .LC4008d8:
-	.long .LC40078c-.LC4008c0
+	.long .LC400780-.LC4008c4
+.LC4008dc:
+	.long .LC40078c-.LC4008c4
 
 .section .data
 .align 8
@@ -499,14 +507,14 @@ main:
 .LC4006bc:
 	jne .L4006cc
 .LC4006be:
-	leaq .LC400867(%rip), %rdi
+	leaq .LC400869(%rip), %rdi
 .LC4006c5:
 	callq puts@PLT
 .LC4006ca:
 	jmp .L4006d8
 .L4006cc:
 .LC4006cc:
-	leaq .LC40086b(%rip), %rdi
+	leaq .LC40086d(%rip), %rdi
 .LC4006d3:
 	callq puts@PLT
 .L4006d8:
@@ -517,14 +525,14 @@ main:
 .LC4006de:
 	jne .L4006ee
 .LC4006e0:
-	leaq .LC400871(%rip), %rdi
+	leaq .LC400873(%rip), %rdi
 .LC4006e7:
 	callq puts@PLT
 .LC4006ec:
 	jmp .L4006fa
 .L4006ee:
 .LC4006ee:
-	leaq .LC400875(%rip), %rdi
+	leaq .LC400877(%rip), %rdi
 .LC4006f5:
 	callq puts@PLT
 .L4006fa:
@@ -543,13 +551,13 @@ main:
 .LC40070f:
 	leaq 0(, %rax, 4), %rdx
 .LC400717:
-	leaq .LC4008c0(%rip), %rax
+	leaq .LC4008c4(%rip), %rax
 .LC40071e:
 	movl 0(%rdx, %rax), %eax
 .LC400721:
 	movslq %eax, %rdx
 .LC400724:
-	leaq .LC4008c0(%rip), %rax
+	leaq .LC4008c4(%rip), %rax
 .LC40072b:
 	addq %rdx, %rax
 .LC40072e:
@@ -559,7 +567,7 @@ main:
 .LC400735:
 	callq .L400646
 .LC40073a:
-	leaq .LC40087b(%rip), %rdi
+	leaq .LC40087d(%rip), %rdi
 .LC400741:
 	callq puts@PLT
 .LC400746:
@@ -567,32 +575,32 @@ main:
 .LC40074b:
 	callq .L40065e
 .LC400750:
-	leaq .LC400882(%rip), %rdi
+	leaq .LC400884(%rip), %rdi
 .LC400757:
 	callq puts@PLT
 .LC40075c:
-	leaq .LC40088a(%rip), %rdi
+	leaq .LC40088c(%rip), %rdi
 .LC400763:
 	callq puts@PLT
 .LC400768:
-	leaq .LC400894(%rip), %rdi
+	leaq .LC400896(%rip), %rdi
 .LC40076f:
 	callq puts@PLT
 .LC400774:
-	leaq .LC40089d(%rip), %rdi
+	leaq .LC40089f(%rip), %rdi
 .LC40077b:
 	callq puts@PLT
 .LC400780:
-	leaq .LC4008a4(%rip), %rdi
+	leaq .LC4008a6(%rip), %rdi
 .LC400787:
 	callq puts@PLT
 .LC40078c:
-	leaq .LC4008ad(%rip), %rdi
+	leaq .LC4008af(%rip), %rdi
 .LC400793:
 	callq puts@PLT
 .L400798:
 .LC400798:
-	leaq .LC4008b4(%rip), %rdi
+	leaq .LC4008b6(%rip), %rdi
 .LC40079f:
 	callq puts@PLT
 .LC4007a4:
@@ -602,7 +610,7 @@ main:
 .LC4007ad:
 	movl %eax, %esi
 .LC4007af:
-	leaq .LC4008ba(%rip), %rdi
+	leaq .LC4008bc(%rip), %rdi
 .LC4007b6:
 	movl $0, %eax
 .LC4007bb:

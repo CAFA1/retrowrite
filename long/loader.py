@@ -12,11 +12,13 @@ from disasm import disasm_bytes
 #long
 from container import InstructionWrapper
 import re
+
 class Loader():
 	def __init__(self, fname):
 		self.fd = open(fname, 'rb')
 		self.elffile = ELFFile(self.fd)
 		self.container = Container()
+		
 
 	def load_functions(self, fnlist):
 		section = self.elffile.get_section_by_name(".text")
@@ -34,12 +36,6 @@ class Loader():
 	def load_text(self):
 		section = self.elffile.get_section_by_name(".text")
 		data = section.data() #bytes
-		#print(type(data))
-		init_sig=b'\x41\x57\x41\x56\x41\x89\xff\x41\x55\x41\x54\x4c\x8d\x25...\x00\x55\x48\x8d\x2d...\x00\x53\x49\x89\xf6\x49\x89\xd5\x4c\\\x29\xe5\x48\x83\xec\x08\x48\xc1\xfd\x03\xe8\xa7..\xff\x48\x85\xed\x74\x20\x31\xdb\x0f\x1f\x84\x00\x00\x00\x00\x00\x4c\x89\xea\x4c\x89\xf6\x44\x89\xff\x41\xff\x14\xdc\x48\x83\xc3\x01\x48\x39\xeb\x75\xea\x48\x83\xc4\x08\\\x5b\\\x5d\x41\\\x5c\x41\\\x5d\x41\\\x5e\x41\x5f\xc3'
-		#init_sig=b'\x41\x57\x41\x56\x41\x89\xff\x41\x55\x41\x54\x4c\x8d\x25.{3}\x00\x55\x48\x8d\x2d.{3}\x00\x53\x49\x89\xf6\x49\x89\xd5\x4c'
-		data=re.sub(init_sig,b'',data)
-		
-		
 		text_base = section['sh_addr'] #the base addrs of .text section
 		text_size = section['sh_size']
 		entries = disasm_bytes(data, text_base)

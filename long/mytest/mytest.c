@@ -9,8 +9,8 @@ int func2(int b){
 	return c;
 }
 void main(){
-	char a[10];
-	scanf("%s",a);
+	char a[16];
+	scanf("%10s",a);
 	if(a[0]=='1')
 	{
 		printf("%s\n","oka" );
