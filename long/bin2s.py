@@ -6,7 +6,7 @@ sys.path.append(os.getcwd())
 import argparse
 from collections import defaultdict
 
-from capstone import CS_OP_IMM, CS_GRP_JUMP, CS_GRP_CALL, CS_OP_MEM
+from capstone import CS_OP_IMM, CS_GRP_JUMP, CS_GRP_CALL, CS_OP_MEM, CS_OP_REG
 from capstone.x86_const import X86_REG_RIP
 
 from elftools.elf.descriptions import describe_reloc_type
@@ -103,16 +103,18 @@ class Rewriter():
 		#movq $0x400687, %rdi
 		main_address=0
 		if(mov_main_instruction.mnemonic.startswith('mov')):
-			main_address=int(mov_main_instruction.op_str.split(',')[0][1:],16)
+			main_address=int(mov_main_instruction.op_str.split(',')[0][3:],16)
 		assert main_address!=0
+
 		for instruction in self.container.disa_list:
 			
 			if(instruction.address==main_address):
 				results.append('.globl main\nmain:\n')
 			#long init call
-			
+			#init_call
 			if(self.is_in_list(instruction.address,init_call_funcs_list)):
 				continue
+
 			if(instruction.address in self.container.tags_set):
 				results.append(".L%x:" % (instruction.address))
 				results.append(".LC%x:" % (instruction.address))
@@ -190,12 +192,46 @@ class Symbolizer():
 			self.symbolized.add(inst.address)
 
 		self.symbolize_cf_transfer(container, context)
+		#long
+		self.symbolize_text_long(container, context)
 		# Symbolize remaining memory accesses
 		self.symbolize_mem_accesses(container, context)
 		self.symbolize_switch_tables(container, context)
+		self.symbolize_switch_tables_long(container, context)
+	def symbolize_mov_imm(self, container,instruction):
+
+		if instruction.mnemonic.startswith('mov') and instruction.cs.operands[0].type == CS_OP_IMM :
+			target = instruction.cs.operands[0].imm
+			# Check if the target is in .text section.
+			if container.is_in_section(".text", target):
+				container.tags_set.add(target)
+				instruction.op_str = instruction.op_str.replace(hex(target),".L"+hex(target)[2:]) #add tag!!!!
+			elif container.is_in_section(".rodata", target):
+				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+			
+			print("mov: 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
+			return True
+		else:
+			return False
+	#movq 0x400888(, %rax, 8), %rax
+	def symbolize_mov_imm_reg(self, container,instruction):
+
+		if instruction.mnemonic.startswith('mov') and instruction.cs.operands[0].type == CS_OP_MEM and instruction.cs.operands[1].type == CS_OP_REG:
+			target = instruction.cs.operands[0].mem.disp
+
+
+			if container.is_in_section(".rodata", target):
+				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+			
+				print("mov off(): 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
+				container.switch_addrs_set.add(target)
+				return True
+
+		return False
 	#long
 	def symbolize_cf_transfer(self, container, context=None):
 		for instruction in container.disa_list:
+			
 			is_jmp = CS_GRP_JUMP in instruction.cs.groups
 			is_call = CS_GRP_CALL in instruction.cs.groups
 			if not (is_jmp or is_call):
@@ -209,6 +245,9 @@ class Symbolizer():
 				elif target in container.plt:
 					instruction.op_str = "{}@PLT".format(
 						container.plt[target])
+					#long: omit _start function
+					if(instruction.op_str.startswith('__libc_start_main')):
+						container.missed_call_set.add(instruction.address)
 				else:
 					#long
 					print('this instruction: '+hex(instruction.address))
@@ -227,7 +266,7 @@ class Symbolizer():
 					else:
 						
 						print("[x] Missed call target: %x" % (target))
-				print("0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
+				#print("0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
 				
 
 	def symbolize_switch_tables(self, container, context):
@@ -248,7 +287,7 @@ class Symbolizer():
 
 			# We have a valid switch base now.
 			swlbl = ".LC%x-.LC%x" % (value, swbase)
-			print ('swlbl: '+swlbl+'\n')
+			#print ('swlbl: '+swlbl+'\n')
 			rodata.replace(swbase, 4, swlbl)
 
 			# Symbolize as long as we can
@@ -268,6 +307,44 @@ class Symbolizer():
 				swlbl = ".LC%x-.LC%x" % (value, swbase)
 				print ('swlbl: '+swlbl+'\n')
 				rodata.replace(slot, 4, swlbl)
+	def symbolize_switch_tables_long(self, container, context):
+		rodata = container.sections.get(".rodata", None)
+		if not rodata:
+			return
+		all_bases = container.switch_addrs_set
+		for swbase in sorted(all_bases, reverse=True):
+			value = rodata.read_at_qword(swbase, 8)
+			if not value:
+				continue
+
+			value = value  & 0xffffffffffffffff
+			if not container.is_in_section(".text", value):
+				continue
+			if value not in container.inst_addrs_set:
+				continue
+
+			# We have a valid switch base now.
+			swlbl = ".LC%x" % value
+			print ('long switch: '+swlbl+'\n')
+			rodata.replace(swbase, 8, swlbl)
+
+			# Symbolize as long as we can
+			for slot in range(swbase + 8, rodata.base + rodata.sz, 8):
+				if slot in all_bases:
+					break
+
+				value = rodata.read_at_qword(slot, 8)
+				if not value:
+					break
+				value = value  & 0xffffffffffffffff
+				if not container.is_in_section(".text", value):
+					break
+				if value not in container.inst_addrs_set:
+					break
+
+				swlbl = ".LC%x" % value
+				print ('long switch: '+swlbl+'\n')
+				rodata.replace(slot, 8, swlbl)
 
 	def _adjust_target(self, container, target):
 		# Find the nearest section
@@ -396,6 +473,12 @@ class Symbolizer():
 			else:
 				print("[x] Couldn't find valid section {:x}".format(
 					rel['offset']))
+	def symbolize_text_long(self, container, context=None):
+		for instruction in container.disa_list:
+			if(self.symbolize_mov_imm(container,instruction)):
+				continue
+			if (self.symbolize_mov_imm_reg(container, instruction)):
+				continue
 
 
 if __name__ == "__main__":

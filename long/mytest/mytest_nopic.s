@@ -212,117 +212,19 @@ _IO_stdin_used_400820: # 400820 -- 400824
 .LC400887:
 	.byte 0x0
 .LC400888:
-	.byte 0xff
-.LC400889:
-	.byte 0x6
-.LC40088a:
-	.byte 0x40
-.LC40088b:
-	.byte 0x0
-.LC40088c:
-	.byte 0x0
-.LC40088d:
-	.byte 0x0
-.LC40088e:
-	.byte 0x0
-.LC40088f:
-	.byte 0x0
+	.quad .LC4006ff
 .LC400890:
-	.byte 0x13
-.LC400891:
-	.byte 0x7
-.LC400892:
-	.byte 0x40
-.LC400893:
-	.byte 0x0
-.LC400894:
-	.byte 0x0
-.LC400895:
-	.byte 0x0
-.LC400896:
-	.byte 0x0
-.LC400897:
-	.byte 0x0
+	.quad .LC400713
 .LC400898:
-	.byte 0x27
-.LC400899:
-	.byte 0x7
-.LC40089a:
-	.byte 0x40
-.LC40089b:
-	.byte 0x0
-.LC40089c:
-	.byte 0x0
-.LC40089d:
-	.byte 0x0
-.LC40089e:
-	.byte 0x0
-.LC40089f:
-	.byte 0x0
+	.quad .LC400727
 .LC4008a0:
-	.byte 0x31
-.LC4008a1:
-	.byte 0x7
-.LC4008a2:
-	.byte 0x40
-.LC4008a3:
-	.byte 0x0
-.LC4008a4:
-	.byte 0x0
-.LC4008a5:
-	.byte 0x0
-.LC4008a6:
-	.byte 0x0
-.LC4008a7:
-	.byte 0x0
+	.quad .LC400731
 .LC4008a8:
-	.byte 0x3b
-.LC4008a9:
-	.byte 0x7
-.LC4008aa:
-	.byte 0x40
-.LC4008ab:
-	.byte 0x0
-.LC4008ac:
-	.byte 0x0
-.LC4008ad:
-	.byte 0x0
-.LC4008ae:
-	.byte 0x0
-.LC4008af:
-	.byte 0x0
+	.quad .LC40073b
 .LC4008b0:
-	.byte 0x45
-.LC4008b1:
-	.byte 0x7
-.LC4008b2:
-	.byte 0x40
-.LC4008b3:
-	.byte 0x0
-.LC4008b4:
-	.byte 0x0
-.LC4008b5:
-	.byte 0x0
-.LC4008b6:
-	.byte 0x0
-.LC4008b7:
-	.byte 0x0
+	.quad .LC400745
 .LC4008b8:
-	.byte 0x4f
-.LC4008b9:
-	.byte 0x7
-.LC4008ba:
-	.byte 0x40
-.LC4008bb:
-	.byte 0x0
-.LC4008bc:
-	.byte 0x0
-.LC4008bd:
-	.byte 0x0
-.LC4008be:
-	.byte 0x0
-.LC4008bf:
-	.byte 0x0
+	.quad .LC40074f
 
 .section .data
 .align 8
@@ -384,30 +286,6 @@ completed.7594_601054: # 601054 -- 601055
 	.byte 0x0
 	.section	.text
 .align 16
-.LC400550:
-	xorl %ebp, %ebp
-.LC400552:
-	movq %rdx, %r9
-.LC400555:
-	popq %rsi
-.LC400556:
-	movq %rsp, %rdx
-.LC400559:
-	andq $0xfffffffffffffff0, %rsp
-.LC40055d:
-	pushq %rax
-.LC40055e:
-	pushq %rsp
-.LC40055f:
-	movq $0x400810, %r8
-.LC400566:
-	movq $0x4007a0, %rcx
-.LC40056d:
-	movq $0x40067b, %rdi
-.LC400574:
-	callq __libc_start_main@PLT
-.LC400579:
-	hlt 
 .LC40057a:
 	nopw 0(%rax, %rax)
 .L400580:
@@ -576,6 +454,7 @@ completed.7594_601054: # 601054 -- 601055
 .globl main
 main:
 
+.L40067b:
 .LC40067b:
 	pushq %rbp
 .LC40067c:
@@ -593,7 +472,7 @@ main:
 .LC400696:
 	movq %rax, %rsi
 .LC400699:
-	movl $0x400828, %edi
+	movl $.LC400828, %edi
 .LC40069e:
 	movl $0, %eax
 .LC4006a3:
@@ -605,14 +484,14 @@ main:
 .LC4006ae:
 	jne .L4006bc
 .LC4006b0:
-	movl $0x40082d, %edi
+	movl $.LC40082d, %edi
 .LC4006b5:
 	callq puts@PLT
 .LC4006ba:
 	jmp .L4006c6
 .L4006bc:
 .LC4006bc:
-	movl $0x400831, %edi
+	movl $.LC400831, %edi
 .LC4006c1:
 	callq puts@PLT
 .L4006c6:
@@ -623,14 +502,14 @@ main:
 .LC4006cc:
 	jne .L4006da
 .LC4006ce:
-	movl $0x400837, %edi
+	movl $.LC400837, %edi
 .LC4006d3:
 	callq puts@PLT
 .LC4006d8:
 	jmp .L4006e4
 .L4006da:
 .LC4006da:
-	movl $0x40083b, %edi
+	movl $.LC40083b, %edi
 .LC4006df:
 	callq puts@PLT
 .L4006e4:
@@ -647,7 +526,7 @@ main:
 .LC4006f3:
 	movl %eax, %eax
 .LC4006f5:
-	movq 0x400888(, %rax, 8), %rax
+	movq .LC400888(, %rax, 8), %rax
 .LC4006fd:
 	jmpq *%rax
 .LC4006ff:
@@ -655,7 +534,7 @@ main:
 .LC400704:
 	callq .L400646
 .LC400709:
-	movl $0x400841, %edi
+	movl $.LC400841, %edi
 .LC40070e:
 	callq puts@PLT
 .LC400713:
@@ -663,32 +542,32 @@ main:
 .LC400718:
 	callq .L40065b
 .LC40071d:
-	movl $0x400848, %edi
+	movl $.LC400848, %edi
 .LC400722:
 	callq puts@PLT
 .LC400727:
-	movl $0x400850, %edi
+	movl $.LC400850, %edi
 .LC40072c:
 	callq puts@PLT
 .LC400731:
-	movl $0x40085a, %edi
+	movl $.LC40085a, %edi
 .LC400736:
 	callq puts@PLT
 .LC40073b:
-	movl $0x400863, %edi
+	movl $.LC400863, %edi
 .LC400740:
 	callq puts@PLT
 .LC400745:
-	movl $0x40086a, %edi
+	movl $.LC40086a, %edi
 .LC40074a:
 	callq puts@PLT
 .LC40074f:
-	movl $0x400873, %edi
+	movl $.LC400873, %edi
 .LC400754:
 	callq puts@PLT
 .L400759:
 .LC400759:
-	movl $0x40087a, %edi
+	movl $.LC40087a, %edi
 .LC40075e:
 	callq puts@PLT
 .LC400763:
@@ -696,7 +575,7 @@ main:
 .LC400769:
 	movl %eax, %esi
 .LC40076b:
-	movl $0x400880, %edi
+	movl $.LC400880, %edi
 .LC400770:
 	movl $0, %eax
 .LC400775:
@@ -722,5 +601,6 @@ main:
 	nopl 0(%rax, %rax)
 .LC400806:
 	nopw %cs:0(%rax, %rax)
+.L400810:
 .LC400810:
 	retq 

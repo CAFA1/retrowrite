@@ -33,6 +33,8 @@ class Container():
 		self.rodata_tags_set=set()
 		#long 
 		self.missed_call_set = set()
+		#long
+		self.switch_addrs_set = set()
 
 		self.function_names = set()
 		self.sections = dict()
@@ -333,7 +335,19 @@ class DataSection():
 			value=0
 
 		return value
+	#long
+	def read_at_qword(self, address, sz):
+		cacheoff = address - self.base
+		
+		#IPython.embed()
+		try:
+			value = struct.unpack(
+			"<Q",
+			bytes([x.value for x in self.cache[cacheoff:cacheoff + sz]]))[0]
+		except:
+			value=0
 
+		return value
 	def replace(self, address, sz, value):
 		cacheoff = address - self.base
 
