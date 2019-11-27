@@ -27,4 +27,8 @@ test_nopic:
 mytest_nopic_strip:
 	gcc  -o mytest/mytest_nopic_strip mytest/mytest.c
 	strip mytest/mytest_nopic_strip
-
+	python bin2s.py mytest/mytest_nopic_strip mytest/mytest_nopic_strip.s
+	gcc -g -o mytest/mytest_nopic_strip_gcc mytest/mytest_nopic_strip.s
+	../docker/afl/afl-gcc -o mytest/mytest_nopic_strip_afl mytest/mytest_nopic_strip.s
+test_nopic_strip:
+	../docker/afl/afl-fuzz -i fuzz/in -o fuzz/out mytest/mytest_nopic_strip_afl

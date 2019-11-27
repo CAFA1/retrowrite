@@ -32,7 +32,7 @@ class Container():
 		#long
 		self.rodata_tags_set=set()
 		#long 
-		self.missed_call_set = set()
+		self.missed_call_list = list()
 		#long
 		self.switch_addrs_set = set()
 

@@ -71,26 +71,50 @@ class Rewriter():
 	#long
 	def is_in_list(self,addr,init_call_funcs_list):
 		for init_call in init_call_funcs_list:
-			if(addr>=init_call[0] and addr<=init_call[0]+init_call[1]):
+			if(addr>=init_call[0] and addr<=init_call[1]):
 				return True
 		return False
 	def dump(self):
 		results = list()
+		text_base = self.container.sections['.text'].base
+		text_size = self.container.sections['.text'].sz
 		for sec, section in sorted(
 				self.container.sections.items(), key=lambda x: x[1].base):
 			#long
 			if(section.name != '.text'):
 				results.append("%s" % (section))
+
 		#long
 		results.append("	.section\t.text")
 		results.append(".align 16")
 		#long find call .init section function
 		init_call_funcs_list=list()
-		for call_site in self.container.missed_call_set:
+		for (call_site,target_str) in self.container.missed_call_list:
 			func1 = self.r2.cmd('afij '+hex(call_site))
+			print('missed_call_site: '+hex(call_site))
 			func1_json = json.loads(func1)
-			print(hex(func1_json[0]['offset']),hex(func1_json[0]['size']))
-			init_call_funcs_list.append((func1_json[0]['offset'],func1_json[0]['size']))
+			if(func1_json!=[]):
+				print('ignore func: '+hex(func1_json[0]['offset']),hex(func1_json[0]['size']))
+				init_call_funcs_list.append((func1_json[0]['offset'],func1_json[0]['offset']+func1_json[0]['size']))
+			else:
+				#init func
+				try:
+					target_int = int(target_str,16)
+					if self.container.is_in_section(".init", target_int):
+						init_sig_start = b'\x41\x57\x41\x56\x41\x89\xff\x41\x55\x41\x54\x4c'
+						init_sig_end = b'\x48\x83\xc4\x08\x5b\x5d\x41\x5c\x41\x5d\x41\x5e\x41\x5f\xc3'
+
+						init_sig_start_pos = self.container.sections['.text'].bytes.find(init_sig_start,call_site-55-text_base,call_site-text_base)
+						end_pos =   (text_base+ text_size) if (call_site+62)>(text_base+ text_size) else (call_site+62)
+						init_sig_end_pos = self.container.sections['.text'].bytes.find(init_sig_end,call_site-text_base,end_pos-text_base)
+						assert init_sig_start_pos!=-1 and init_sig_end_pos!=-1
+						init_call_funcs_list.append((init_sig_start_pos+text_base,init_sig_end_pos+text_base+len(init_sig_end)))
+
+				except Exception as e:
+					pass
+				
+				
+				
 
 		#long find main
 		last_instruction = self.container.disa_list[0]
@@ -247,11 +271,11 @@ class Symbolizer():
 						container.plt[target])
 					#long: omit _start function
 					if(instruction.op_str.startswith('__libc_start_main')):
-						container.missed_call_set.add(instruction.address)
+						container.missed_call_list.append((instruction.address,instruction.op_str))
 				else:
 					#long
 					print('this instruction: '+hex(instruction.address))
-					container.missed_call_set.add(instruction.address)
+					container.missed_call_list.append((instruction.address,instruction.op_str))
 					gotent = container.is_target_gotplt(target)
 					if gotent:
 						found = False
