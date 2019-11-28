@@ -39,3 +39,4 @@ mytest/mylib/gcc/
 docker/tiff/
 long/fuzz/
 long/peda-session*
+long/readelf/

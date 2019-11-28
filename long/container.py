@@ -348,8 +348,46 @@ class DataSection():
 			value=0
 
 		return value
+	#long
+	def read_at_byte(self, address):
+		cacheoff = address - self.base
+		
+		#IPython.embed()
+		try:
+			value = struct.unpack(
+			"c",
+			bytes([x.value for x in self.cache[cacheoff:cacheoff + 1]]))[0]
+		except:
+			value=0xff
+
+		return value
+	#long
+	def read_at_qword_offset(self, address, sz):
+		cacheoff = address 
+		
+		#IPython.embed()
+		try:
+			value = struct.unpack(
+			"<Q",
+			bytes([x.value for x in self.cache[cacheoff:cacheoff + sz]]))[0]
+		except:
+			value=0
+
+		return value
 	def replace(self, address, sz, value):
 		cacheoff = address - self.base
+
+		if cacheoff >= len(self.cache):
+			print("[x] Could not replace value in {}".format(self.name))
+			return
+
+		self.cache[cacheoff].value = value
+		self.cache[cacheoff].sz = sz
+
+		for cell in self.cache[cacheoff + 1:cacheoff + sz]:
+			cell.set_ignored()
+	def replace_offset(self, address, sz, value):
+		cacheoff = address 
 
 		if cacheoff >= len(self.cache):
 			print("[x] Could not replace value in {}".format(self.name))

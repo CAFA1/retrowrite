@@ -14,7 +14,7 @@ from elftools.elf.enums import ENUM_RELOC_TYPE_x64
 #long
 import r2pipe 
 import json
-
+import IPython
 
 class Rewriter():
 	GCC_FUNCTIONS = [
@@ -222,19 +222,46 @@ class Symbolizer():
 		self.symbolize_mem_accesses(container, context)
 		self.symbolize_switch_tables(container, context)
 		self.symbolize_switch_tables_long(container, context)
+		self.symbolize_data_long(container, context)
+		
+	def int_printable(self,int1):
+		printable_chars = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','@',' ','.','_','+','-','0','1','2','3','4','5','6','7','8','9']
+		if(int1<0):
+			return False
+		int1_str_hex=hex(int1)[2:]
+		len_bytes = len(int1_str_hex)
+		if(len_bytes % 2 != 0):
+			return False
+		#len_bytes = len_bytes//2
+		for i in range(0,len_bytes,2):
+			byte_int = int(int1_str_hex[i:i+2],16)
+			byte_char = chr(byte_int)
+			if(byte_char not in printable_chars):
+				return False
+		return True
 	def symbolize_mov_imm(self, container,instruction):
 
-		if instruction.mnemonic.startswith('mov') and instruction.cs.operands[0].type == CS_OP_IMM :
-			target = instruction.cs.operands[0].imm
-			# Check if the target is in .text section.
-			if container.is_in_section(".text", target):
-				container.tags_set.add(target)
-				instruction.op_str = instruction.op_str.replace(hex(target),".L"+hex(target)[2:]) #add tag!!!!
-			elif container.is_in_section(".rodata", target):
-				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
-			
-			print("mov: 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
-			return True
+		if instruction.mnemonic.startswith('mov'):
+			if(instruction.cs.operands[0].type == CS_OP_IMM) :
+				target = instruction.cs.operands[0].imm
+				#str
+				if(self.int_printable(target)):
+					return False
+
+				# Check if the target is in .text section.
+				if container.is_in_section(".text", target):
+					container.tags_set.add(target)
+					instruction.op_str = instruction.op_str.replace(hex(target),".L"+hex(target)[2:]) #add tag!!!!
+				elif container.is_in_section(".rodata", target):
+					instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+				elif container.is_in_section(".data", target):
+					instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+				elif container.is_in_section(".bss", target):
+					instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+
+				#print("mov: 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
+				return True
+
 		else:
 			return False
 	#movq 0x400888(, %rax, 8), %rax
@@ -242,14 +269,30 @@ class Symbolizer():
 
 		if instruction.mnemonic.startswith('mov') and instruction.cs.operands[0].type == CS_OP_MEM and instruction.cs.operands[1].type == CS_OP_REG:
 			target = instruction.cs.operands[0].mem.disp
-
-
 			if container.is_in_section(".rodata", target):
 				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
 			
-				print("mov off(): 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
+				#print("mov off(): 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
 				container.switch_addrs_set.add(target)
 				return True
+			if container.is_in_section(".data", target):
+				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+				print("data off(): 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
+				
+				return True
+
+		return False
+	#long: jmpq	*0x4994e0(, %rax, 8)
+	def symbolize_jmp_switch(self, container,instruction):
+		if instruction.mnemonic.startswith('jmp') and len(instruction.cs.operands)==1 and instruction.cs.operands[0].type==CS_OP_MEM:
+			if instruction.cs.operands[0].mem.scale == 8:
+				target = instruction.cs.operands[0].mem.disp
+				if container.is_in_section(".rodata", target):
+					instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+				
+					#print("jmp off(): 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
+					container.switch_addrs_set.add(target)
+					return True
 
 		return False
 	#long
@@ -274,7 +317,7 @@ class Symbolizer():
 						container.missed_call_list.append((instruction.address,instruction.op_str))
 				else:
 					#long
-					print('this instruction: '+hex(instruction.address))
+					#print('this instruction: '+hex(instruction.address))
 					container.missed_call_list.append((instruction.address,instruction.op_str))
 					gotent = container.is_target_gotplt(target)
 					if gotent:
@@ -329,10 +372,11 @@ class Symbolizer():
 					break
 
 				swlbl = ".LC%x-.LC%x" % (value, swbase)
-				print ('swlbl: '+swlbl+'\n')
+				#print ('swlbl: '+swlbl+'\n')
 				rodata.replace(slot, 4, swlbl)
 	def symbolize_switch_tables_long(self, container, context):
 		rodata = container.sections.get(".rodata", None)
+		
 		if not rodata:
 			return
 		all_bases = container.switch_addrs_set
@@ -349,7 +393,7 @@ class Symbolizer():
 
 			# We have a valid switch base now.
 			swlbl = ".LC%x" % value
-			print ('long switch: '+swlbl+'\n')
+			#print ('long switch: '+swlbl+'\n')
 			rodata.replace(swbase, 8, swlbl)
 
 			# Symbolize as long as we can
@@ -367,8 +411,67 @@ class Symbolizer():
 					break
 
 				swlbl = ".LC%x" % value
-				print ('long switch: '+swlbl+'\n')
+				#print ('long switch: '+swlbl+'\n')
 				rodata.replace(slot, 8, swlbl)
+	def char_printable(self,char1):
+		printable_chars = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','@',' ','.','_','+','-','0','1','2','3','4','5','6','7','8','9']
+		#IPython.embed()
+		if chr(char1[0]) in printable_chars:
+			return True
+		return False
+	def rodata_is_string(self,container,value):
+		rodata = container.sections.get(".rodata", None)
+		rodata_section = container.sections['.rodata']
+		max_string = 30
+		count_string = 0 
+		final_count = 0
+		for i in range(0,max_string):
+			value1 = rodata.read_at_byte(value+i)
+			if(self.char_printable(value1)):
+				count_string = count_string+1
+			elif(value1[0]==0):
+				final_count = count_string
+				break
+			else:
+				final_count = 0
+				break
+		if(final_count>0 and final_count<max_string):
+			return True
+		else:
+			return False
+
+	def symbolize_data_long(self, container, context):
+		data = container.sections.get(".data", None)
+		data_section = container.sections['.data']
+		if not data:
+			return
+		for swbase in range(0,data_section.sz,1):
+			#print('data processing '+str(swbase)+' --> '+str(data_section.sz))
+			value = data.read_at_qword_offset(swbase, 8)
+			if not value:
+				continue
+			value = value  & 0xffffffffffffffff
+			if  container.is_in_section(".text", value) and (value in container.inst_addrs_set):
+				# We have a valid switch base now.
+				swlbl = ".LC%x" % value
+				#print ('data switch: '+swlbl+'\n')
+				data.replace_offset(swbase, 8, swlbl)
+			elif container.is_in_section(".rodata", value):
+				#print('rodata: '+hex(swbase+data_section.base))
+				if(self.rodata_is_string(container,value)):
+					swlbl = ".LC%x" % value
+					#print ('data ref rodata: '+hex(swbase+data_section.base)+' '+swlbl)
+					data.replace_offset(swbase, 8, swlbl)
+			elif container.is_in_section(".data", value):
+				#print('rodata: '+hex(swbase+data_section.base))
+				swlbl = ".LC%x" % value
+				#print ('data ref rodata: '+hex(swbase+data_section.base)+' '+swlbl)
+				data.replace_offset(swbase, 8, swlbl)
+			elif container.is_in_section(".bss", value):
+				#print('rodata: '+hex(swbase+data_section.base))
+				swlbl = ".LC%x" % value
+				#print ('data ref rodata: '+hex(swbase+data_section.base)+' '+swlbl)
+				data.replace_offset(swbase, 8, swlbl)
 
 	def _adjust_target(self, container, target):
 		# Find the nearest section
@@ -445,15 +548,15 @@ class Symbolizer():
 					else:
 						target, adjust = self._adjust_target(
 							container, target)
-						inst.op_str = inst.op_str.replace(
-							hex(value), "%d+.LC%x" % (adjust, target))
+						#inst.op_str = inst.op_str.replace(hex(value), "%d+.LC%x" % (adjust, target))
 						print("[*] Adjusted: %x -- %d+.LC%x" %
 							  (inst.address, adjust, target))
 
 				if container.is_in_section(".rodata", target):
 					container.rodata_tags_set.add(target) #This function has the LC tag
 
-				print("mem 0x%x:\t%s\t%s" % (inst.address, inst.mnemonic, inst.op_str))
+				#print("mem 0x%x:\t%s\t%s" % (inst.address, inst.mnemonic, inst.op_str))
+
 
 	def _handle_relocation(self, container, section, rel):
 		print('_handle_relocation secname: '+section.name)
@@ -501,7 +604,11 @@ class Symbolizer():
 		for instruction in container.disa_list:
 			if(self.symbolize_mov_imm(container,instruction)):
 				continue
+			#switch case 1 : mov
 			if (self.symbolize_mov_imm_reg(container, instruction)):
+				continue
+			#switch case 2: jmp
+			if (self.symbolize_jmp_switch(container, instruction)):
 				continue
 
 

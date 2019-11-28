@@ -1,14 +1,36 @@
-#init in idapython map(ord,list(get_bytes(0x4007e0,0x400844-0x4007e0)))
-init1=[65, 87, 65, 86, 65, 137, 255, 65, 85, 65, 84, 76, 141, 37, 30, 6, 32, 0, 85, 72, 141, 45, 30, 6, 32, 0, 83, 73, 137, 246, 73, 137, 213, 76, 41, 229, 72, 131, 236, 8, 72, 193, 253, 3, 232, 167, 252, 255, 255, 72, 133, 237, 116, 32, 49, 219, 15, 31, 132, 0, 0, 0, 0, 0, 76, 137, 234, 76, 137, 246, 68, 137, 255, 65, 255, 20, 220, 72, 131, 195, 1, 72, 57, 235, 117, 234, 72, 131, 196, 8, 91, 93, 65, 92, 65, 93, 65, 94, 65, 95, 195]
+aa=''
+for i in range(ord('0'),ord('9')+1):
+	aa=aa+"'"+chr(i)+"'"+','
+print(aa)
+def int_printable( int1):
+	printable_chars = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','@',' ','.']
+	int1_str_hex=hex(int1)[2:]
+	len_bytes = len(int1_str_hex)
+	if(len_bytes % 2 != 0):
+		return False
+	len_bytes = len_bytes//2
+	for i in range(0,len_bytes,2):
+		byte_int = int(int1_str_hex[i:i+2],16)
+		byte_char = chr(byte_int)
+		if(byte_char not in printable_chars):
+			return False
+	return True
 
-init2=[65, 87, 65, 86, 65, 137, 255, 65, 85, 65, 84, 76, 141, 37, 238, 48, 36, 0, 85, 72, 141, 45, 238, 48, 36, 0, 83, 73, 137, 246, 73, 137, 213, 76, 41, 229, 72, 131, 236, 8, 72, 193, 253, 3, 232, 167, 71, 251, 255, 72, 133, 237, 116, 32, 49, 219, 15, 31, 132, 0, 0, 0, 0, 0, 76, 137, 234, 76, 137, 246, 68, 137, 255, 65, 255, 20, 220, 72, 131, 195, 1, 72, 57, 235, 117, 234, 72, 131, 196, 8, 91, 93, 65, 92, 65, 93, 65, 94, 65, 95, 195]
+#print(int_printable(0x414320))
+from capstone import *
+def disasm_bytes(bytes, addr):
+	md = Cs(CS_ARCH_X86, CS_MODE_64)
+	md.syntax = CS_OPT_SYNTAX_ATT
+	md.detail = True
+	return list(md.disasm(bytes, addr))
+#FF 24 C5 E0 94 49 00                          jmp     ds:off_4994E0[rax*8] ; switch jump
+ins_bytes = b'\xFF\x24\xC5\xE0\x94\x49\x00'
+ins_str=disasm_bytes(ins_bytes,0)
+instruction = ins_str[0]
+if instruction.mnemonic.startswith('jmp') and len(instruction.operands)==1 and instruction.operands[0].type==CS_OP_MEM:
+	if instruction.operands[0].mem.scale == 8:
+		disp = instruction.operands[0].mem.disp
 
-init_sig=''
-for i in range(0,len(init1)):
-	if(init1[i]==init2[i]):
-		if(chr(init1[i]) in ['(',')','[',']','}','{','|','\\','.','^','$','*','+','?']):
-			init_sig = init_sig +'\\\\'
-		init_sig=init_sig+'\\x'+hex(init1[i])[2:].zfill(2)
-	else:
-		init_sig=init_sig+'.'
-print(init_sig)
+print('ok')
+
+

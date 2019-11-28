@@ -269,30 +269,6 @@
 	.byte 0x0
 	.section	.text
 .align 16
-.LC400550:
-	xorl %ebp, %ebp
-.LC400552:
-	movq %rdx, %r9
-.LC400555:
-	popq %rsi
-.LC400556:
-	movq %rsp, %rdx
-.LC400559:
-	andq $0xfffffffffffffff0, %rsp
-.LC40055d:
-	pushq %rax
-.LC40055e:
-	pushq %rsp
-.LC40055f:
-	movq $0x400850, %r8
-.LC400566:
-	movq $0x4007e0, %rcx
-.LC40056d:
-	movq $0x400687, %rdi
-.LC400574:
-	callq __libc_start_main@PLT
-.LC400579:
-	hlt 
 .LC40057a:
 	nopw 0(%rax, %rax)
 .L400580:
@@ -469,6 +445,7 @@
 .globl main
 main:
 
+.L400687:
 .LC400687:
 	pushq %rbp
 .LC400688:
@@ -623,9 +600,8 @@ main:
 	retq 
 .LC4007d7:
 	nopw 0(%rax, %rax)
-.LC4007e0:
-	nop 
-.LC4007e1:
+.LC400846:
 	nopw %cs:0(%rax, %rax)
-.LC4007eb:
+.L400850:
+.LC400850:
 	retq 

@@ -32,3 +32,7 @@ mytest_nopic_strip:
 	../docker/afl/afl-gcc -o mytest/mytest_nopic_strip_afl mytest/mytest_nopic_strip.s
 test_nopic_strip:
 	../docker/afl/afl-fuzz -i fuzz/in -o fuzz/out mytest/mytest_nopic_strip_afl
+
+readelf_nostrip:
+	python bin2s.py readelf/readelf readelf/readelf.s
+	gcc -g -o readelf/readelf_gcc readelf/readelf.s
