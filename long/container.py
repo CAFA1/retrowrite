@@ -305,6 +305,7 @@ class DataSection():
 		self.align = align
 		self.named_globals = defaultdict(list)
 
+
 	def load(self):
 		assert not self.cache
 		for byte in self.bytes:
@@ -376,28 +377,30 @@ class DataSection():
 		return value
 	def replace(self, address, sz, value):
 		cacheoff = address - self.base
-
 		if cacheoff >= len(self.cache):
 			print("[x] Could not replace value in {}".format(self.name))
 			return
+		if(not self.cache[cacheoff].symbolized):
+			self.cache[cacheoff].value = value
+			self.cache[cacheoff].sz = sz
+			#long
+			self.cache[cacheoff].symbolized = True
 
-		self.cache[cacheoff].value = value
-		self.cache[cacheoff].sz = sz
-
-		for cell in self.cache[cacheoff + 1:cacheoff + sz]:
-			cell.set_ignored()
+			for cell in self.cache[cacheoff + 1:cacheoff + sz]:
+				cell.set_ignored()
 	def replace_offset(self, address, sz, value):
 		cacheoff = address 
 
 		if cacheoff >= len(self.cache):
 			print("[x] Could not replace value in {}".format(self.name))
 			return
+		if(not self.cache[cacheoff].symbolized):
+			self.cache[cacheoff].value = value
+			self.cache[cacheoff].sz = sz
+			self.cache[cacheoff].symbolized = True
 
-		self.cache[cacheoff].value = value
-		self.cache[cacheoff].sz = sz
-
-		for cell in self.cache[cacheoff + 1:cacheoff + sz]:
-			cell.set_ignored()
+			for cell in self.cache[cacheoff + 1:cacheoff + sz]:
+				cell.set_ignored()
 
 	def iter_cells(self):
 		location = self.base
@@ -465,6 +468,7 @@ class DataCell():
 		self.sz = sz
 		self.ignored = False
 		self.is_instrumented = False
+		self.symbolized = False
 
 		# Instrumentation
 		self.before = list()

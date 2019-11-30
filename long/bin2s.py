@@ -224,6 +224,8 @@ class Symbolizer():
 		self.symbolize_switch_tables(container, context)
 		self.symbolize_switch_tables_long(container, context)
 		self.symbolize_data_long(container, context)
+		self.symbolize_rodata_long(container, context)
+		
 		
 	def int_printable(self,int1):
 		if(int1<0):
@@ -240,7 +242,6 @@ class Symbolizer():
 				return False
 		return True
 	def symbolize_mov_imm(self, container,instruction):
-
 		if instruction.mnemonic.startswith('mov'):
 			if(instruction.cs.operands[0].type == CS_OP_IMM) :
 				target = instruction.cs.operands[0].imm
@@ -487,7 +488,38 @@ class Symbolizer():
 				swlbl = ".LC%x" % value
 				#print ('data ref rodata: '+hex(swbase+data_section.base)+' '+swlbl)
 				data.replace_offset(swbase, 8, swlbl)
-
+	def symbolize_rodata_long(self, container, context):
+		data = container.sections.get(".rodata", None)
+		data_section = container.sections['.rodata']
+		if not data:
+			return
+		for swbase in range(0,data_section.sz,1):
+			#print('data processing '+str(swbase)+' --> '+str(data_section.sz))
+			value = data.read_at_qword_offset(swbase, 8)
+			if not value:
+				continue
+			value = value  & 0xffffffffffffffff
+			if  container.is_in_section(".text", value) and (value in container.inst_addrs_set):
+				# We have a valid switch base now.
+				swlbl = ".LC%x" % value
+				#print ('data switch: '+swlbl+'\n')
+				data.replace_offset(swbase, 8, swlbl)
+			elif container.is_in_section(".rodata", value):
+				#print('rodata: '+hex(swbase+data_section.base))
+				if(self.rodata_is_string(container,value)):
+					swlbl = ".LC%x" % value
+					#print ('data ref rodata: '+hex(swbase+data_section.base)+' '+swlbl)
+					data.replace_offset(swbase, 8, swlbl)
+			elif container.is_in_section(".data", value):
+				#print('rodata: '+hex(swbase+data_section.base))
+				swlbl = ".LC%x" % value
+				#print ('data ref rodata: '+hex(swbase+data_section.base)+' '+swlbl)
+				data.replace_offset(swbase, 8, swlbl)
+			elif container.is_in_section(".bss", value):
+				#print('rodata: '+hex(swbase+data_section.base))
+				swlbl = ".LC%x" % value
+				#print ('data ref rodata: '+hex(swbase+data_section.base)+' '+swlbl)
+				data.replace_offset(swbase, 8, swlbl)
 	def _adjust_target(self, container, target):
 		# Find the nearest section
 		sec = None

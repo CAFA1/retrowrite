@@ -36,3 +36,6 @@ test_nopic_strip:
 readelf_nostrip:
 	python bin2s.py readelf/readelf readelf/readelf.s
 	gcc -g -o readelf/readelf_gcc readelf/readelf.s
+	../docker/afl/afl-gcc -o readelf/readelf_afl readelf/readelf.s
+test_readelf_nostrip:
+	../docker/afl/afl-fuzz -i fuzz/in -o fuzz/out readelf/readelf_afl -r @@
