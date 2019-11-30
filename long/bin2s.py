@@ -264,23 +264,34 @@ class Symbolizer():
 
 		else:
 			return False
-	#movq 0x400888(, %rax, 8), %rax
-	def symbolize_mov_imm_reg(self, container,instruction):
-
+	#
+	def symbolize_mov_imm_mem(self, container,instruction):
+		#movq 0x400888(, %rax, 8), %rax
+		if instruction.mnemonic.startswith('mov') and instruction.cs.operands[0].type == CS_OP_IMM and instruction.cs.operands[1].type == CS_OP_MEM:
+			target = instruction.cs.operands[1].mem.disp
+			
+			if container.is_in_section(".rodata", target) or container.is_in_section(".data", target) or container.is_in_section(".bss", target):
+				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+				return True
+		return False
+	
+	def symbolize_mov_mem_reg(self, container,instruction):
+		#movq 0x400888(, %rax, 8), %rax
 		if instruction.mnemonic.startswith('mov') and instruction.cs.operands[0].type == CS_OP_MEM and instruction.cs.operands[1].type == CS_OP_REG:
 			target = instruction.cs.operands[0].mem.disp
 			if container.is_in_section(".rodata", target):
 				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
-			
-				#print("mov off(): 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
 				container.switch_addrs_set.add(target)
 				return True
-			if container.is_in_section(".data", target):
+			if container.is_in_section(".data", target) or container.is_in_section(".bss", target):
 				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
-				print("data off(): 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
-				
 				return True
-
+		#movq %rax, 0x400888(, %rax, 8)
+		elif instruction.mnemonic.startswith('mov') and instruction.cs.operands[0].type == CS_OP_REG and instruction.cs.operands[1].type == CS_OP_MEM:
+			target = instruction.cs.operands[1].mem.disp
+			if container.is_in_section(".rodata", target) or container.is_in_section(".data", target) or container.is_in_section(".bss", target):
+				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+				return True
 		return False
 	#long: jmpq	*0x4994e0(, %rax, 8)
 	def symbolize_jmp_switch(self, container,instruction):
@@ -602,14 +613,15 @@ class Symbolizer():
 					rel['offset']))
 	def symbolize_text_long(self, container, context=None):
 		for instruction in container.disa_list:
-			if(self.symbolize_mov_imm(container,instruction)):
-				continue
+			self.symbolize_mov_imm(container,instruction)
+			self.symbolize_mov_imm_mem(container,instruction)
+			
 			#switch case 1 : mov
-			if (self.symbolize_mov_imm_reg(container, instruction)):
-				continue
+			self.symbolize_mov_mem_reg(container, instruction)
+			
 			#switch case 2: jmp
-			if (self.symbolize_jmp_switch(container, instruction)):
-				continue
+			self.symbolize_jmp_switch(container, instruction)
+			
 
 
 if __name__ == "__main__":
