@@ -358,7 +358,7 @@ class DataSection():
 			"c",
 			bytes([x.value for x in self.cache[cacheoff:cacheoff + 1]]))[0]
 		except:
-			value=0xff
+			value=0
 
 		return value
 	#long

@@ -15,6 +15,7 @@ from elftools.elf.enums import ENUM_RELOC_TYPE_x64
 import r2pipe 
 import json
 import IPython
+import string
 
 class Rewriter():
 	GCC_FUNCTIONS = [
@@ -225,7 +226,6 @@ class Symbolizer():
 		self.symbolize_data_long(container, context)
 		
 	def int_printable(self,int1):
-		printable_chars = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','@',' ','.','_','+','-','0','1','2','3','4','5','6','7','8','9']
 		if(int1<0):
 			return False
 		int1_str_hex=hex(int1)[2:]
@@ -236,7 +236,7 @@ class Symbolizer():
 		for i in range(0,len_bytes,2):
 			byte_int = int(int1_str_hex[i:i+2],16)
 			byte_char = chr(byte_int)
-			if(byte_char not in printable_chars):
+			if(byte_char not in string.printable):
 				return False
 		return True
 	def symbolize_mov_imm(self, container,instruction):
@@ -246,7 +246,10 @@ class Symbolizer():
 				target = instruction.cs.operands[0].imm
 				#str
 				if(self.int_printable(target)):
-					return False
+					if(container.is_in_section(".rodata", target) and not self.rodata_is_string(container,target)):
+						return False
+					elif(not container.is_in_section(".rodata", target)):
+						return False
 
 				# Check if the target is in .text section.
 				if container.is_in_section(".text", target):
@@ -425,9 +428,7 @@ class Symbolizer():
 				#print ('long switch: '+swlbl+'\n')
 				rodata.replace(slot, 8, swlbl)
 	def char_printable(self,char1):
-		printable_chars = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','@',' ','.','_','+','-','0','1','2','3','4','5','6','7','8','9']
-		#IPython.embed()
-		if chr(char1[0]) in printable_chars:
+		if chr(char1[0]) in string.printable:
 			return True
 		return False
 	def rodata_is_string(self,container,value):
@@ -436,17 +437,20 @@ class Symbolizer():
 		max_string = 30
 		count_string = 0 
 		final_count = 0
+		badchars = 0
 		for i in range(0,max_string):
 			value1 = rodata.read_at_byte(value+i)
+			if(value1==0):
+				return False
 			if(self.char_printable(value1)):
 				count_string = count_string+1
 			elif(value1[0]==0):
 				final_count = count_string
 				break
 			else:
-				final_count = 0
+				badchars = 1
 				break
-		if(final_count>0 and final_count<max_string):
+		if(final_count>=0 and final_count<max_string and badchars==0): #null chars
 			return True
 		else:
 			return False
@@ -615,7 +619,7 @@ class Symbolizer():
 		for instruction in container.disa_list:
 			self.symbolize_mov_imm(container,instruction)
 			self.symbolize_mov_imm_mem(container,instruction)
-			
+
 			#switch case 1 : mov
 			self.symbolize_mov_mem_reg(container, instruction)
 			
