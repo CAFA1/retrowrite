@@ -279,6 +279,20 @@ class Symbolizer():
 				return True
 		return False
 	
+	#addq	$0x6b14a0, %rbx
+	def symbolize_add_sub_imm(self, container,instruction):
+
+		if (instruction.mnemonic.startswith('add') or instruction.mnemonic.startswith('sub'))and instruction.cs.operands[0].type == CS_OP_IMM:
+			target = instruction.cs.operands[0].imm
+			if container.is_in_section(".rodata", target):
+				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+				return True
+			if container.is_in_section(".data", target) or container.is_in_section(".bss", target):
+				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+				return True
+
+		return False
+	#movq 0x400888(, %rax, 8), %rax
 	def symbolize_mov_mem_reg(self, container,instruction):
 		#movq 0x400888(, %rax, 8), %rax
 		if instruction.mnemonic.startswith('mov') and instruction.cs.operands[0].type == CS_OP_MEM and instruction.cs.operands[1].type == CS_OP_REG:
@@ -651,6 +665,7 @@ class Symbolizer():
 		for instruction in container.disa_list:
 			self.symbolize_mov_imm(container,instruction)
 			self.symbolize_mov_imm_mem(container,instruction)
+			self.symbolize_add_sub_imm(container, instruction)
 
 			#switch case 1 : mov
 			self.symbolize_mov_mem_reg(container, instruction)
