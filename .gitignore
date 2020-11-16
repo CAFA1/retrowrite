@@ -2,6 +2,7 @@
 *.pyc
 testbins/build/
 retrowrite.wiki/
+radare2-master/
 __pycache__/
 .idea/
 docker/base64-fuzz.zip

@@ -276,6 +276,17 @@ class Symbolizer():
 			
 			if container.is_in_section(".rodata", target) or container.is_in_section(".data", target) or container.is_in_section(".bss", target):
 				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+
+				return True
+		return False
+	def symbolize_add_imm_reg(self, container,instruction):
+		#addq $0x6b14a0, %rbx
+		if instruction.mnemonic.startswith('add') and instruction.cs.operands[0].type == CS_OP_IMM and instruction.cs.operands[1].type == CS_OP_REG:
+			target = instruction.cs.operands[0].imm
+			
+			if container.is_in_section(".rodata", target) or container.is_in_section(".data", target) or container.is_in_section(".bss", target):
+				instruction.op_str = instruction.op_str.replace(hex(target),".LC"+hex(target)[2:]) #add tag!!!!
+				print("add_imm_reg: 0x%x:\t%s\t%s" % (instruction.address, instruction.mnemonic, instruction.op_str))
 				return True
 		return False
 	
@@ -651,6 +662,8 @@ class Symbolizer():
 		for instruction in container.disa_list:
 			self.symbolize_mov_imm(container,instruction)
 			self.symbolize_mov_imm_mem(container,instruction)
+			
+			self.symbolize_add_imm_reg(container,instruction)
 
 			#switch case 1 : mov
 			self.symbolize_mov_mem_reg(container, instruction)
